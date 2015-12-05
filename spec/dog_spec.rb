@@ -128,7 +128,7 @@ describe "Dog" do
     it 'updates the record associated with a given instance' do
       teddy.save
       teddy.name = "Teddy Jr."
-      teddy.save
+      teddy.update
 
       teddy_jr = Dog.find_by_name("Teddy Jr.")
       expect(teddy_jr.id).to eq(teddy.id)
