@@ -23,18 +23,17 @@ class Dog
     DB[:conn].execute(sql)
   end
 
-  def self.create(attributes_hash)
-    dog = self.new(attributes_hash)
+  def self.create(name:, breed:)
+    dog = self.new(name:name, breed:breed)
     dog.save
     dog
   end
 
   def self.new_from_db(row)
-    attributes_hash = {}
-    attributes_hash[:id] = row[0]
-    attributes_hash[:name] = row[1]
-    attributes_hash[:breed] = row[2]
-    self.new(attributes_hash)
+    id = row[0]
+    name = row[1]
+    breed = row[2]
+    self.new(id: id, name: name, breed: breed)
   end
 
   def self.find_or_create_by(name:, breed:)
@@ -62,6 +61,7 @@ class Dog
     sql = <<-SQL
       SELECT * FROM dogs
       WHERE name = ?
+      LIMIT 1
     SQL
     DB[:conn].execute(sql, name).map do |row|
       self.new_from_db(row)
