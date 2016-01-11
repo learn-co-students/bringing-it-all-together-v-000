@@ -1,11 +1,11 @@
 class Dog 
-
   attr_accessor :name, :breed
   attr_reader :id 
 
-  def initialize(name:, breed:)
-    @name = name 
-    @breed = breed 
+  def initialize(arguments)
+    @name = arguments[:name]
+    @breed = arguments[:breed]
+    @id = arguments[:id]
   end 
 
   def self.create_table
@@ -47,22 +47,19 @@ class Dog
     dog
   end 
 
-  def self.find_or_create_by(name, breed)
-    dog = DB[:conn].execute("SELECT * FROM dogs WHERE name = '#{name}' AND breed = '#{breed}'")
-    if !dog.empty
+  def self.find_or_create_by(arguments)
+    dog = DB[:conn].execute("SELECT * FROM dogs WHERE name = '#{arguments[:name]}' AND breed = '#{arguments[:breed]}'")
+    if !dog.empty?
       dog_data = dog[0]
-      dog = Dog.new(dog_data[0], dog_data[1], dog_data[2])
+      dog = Dog.new_from_db(dog_data)
     else 
-      dog = self.create(name, breed) 
+      dog = self.create(arguments) 
     end 
     dog 
   end
 
   def self.new_from_db(row)
-    id = row[0]
-    name = row[1]
-    breed = row[2]
-    self.new(id, name, breed)
+    self.new({id: row[0], name: row[1], breed: row[2]})
   end 
 
   def self.find_by_name(name)
@@ -70,13 +67,13 @@ class Dog
     SELECT * FROM dogs WHERE name = ?
     SQL
     dog = DB[:conn].execute(sql, name)[0]
-    Dog.new(dog[0], dog[1], dog[2])
+    Dog.new_from_db(dog)
   end 
 
 def self.find_by_id(id)
     sql = "SELECT * FROM dogs WHERE id = ?"
     result = DB[:conn].execute(sql, id)[0]
-    Dog.new(result[0], {name: result[1], breed: result[2]})
+    Dog.new_from_db(result)
   end
 
   def update
@@ -84,4 +81,4 @@ def self.find_by_id(id)
     DB[:conn].execute(sql, self.name, self.breed, self.id)
   end
 
-end
+end 
