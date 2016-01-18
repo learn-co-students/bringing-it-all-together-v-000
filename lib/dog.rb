@@ -46,7 +46,8 @@ class Dog
 		dog_values = DB[:conn].execute(sql, id)
 		dog_hash = {name: dog_values[0][1], breed: dog_values[0][2]}
 		dog = self.new(dog_hash)
-		binding.pry
+		dog.id = id
+		dog
 	end
 
 end
