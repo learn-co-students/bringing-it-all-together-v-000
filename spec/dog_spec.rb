@@ -127,11 +127,13 @@ describe "Dog" do
   describe '#update' do
     it 'updates the record associated with a given instance' do
       teddy.save
+#need to store teddy's id to a variable after first save, after the second save, without correct update mechanism, teddy's id will change
+      id = teddy.id
       teddy.name = "Teddy Jr."
       teddy.save
 
       teddy_jr = Dog.find_by_name("Teddy Jr.")
-      expect(teddy_jr.id).to eq(teddy.id)
+      expect(teddy_jr.id).to eq(id)
     end
 
   end
