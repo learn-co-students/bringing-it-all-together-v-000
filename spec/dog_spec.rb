@@ -13,7 +13,7 @@ describe "Dog" do
         name TEXT,
         breed TEXT
         )
-    SQL
+SQL
     DB[:conn].execute(sql)
   end
 
