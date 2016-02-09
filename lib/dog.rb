@@ -10,12 +10,7 @@ class Dog
     @breed = breed
   end
 
-  #def initialize(id: nil, name:, breed:)
-    #@id = id
-    #@breed = breed
-    #@name = name
-    
-  #end
+  
   
   def self.create_table
     sql = <<-SQL 
@@ -51,9 +46,50 @@ class Dog
   end 
 
   def self.create(name:, breed:)
-    dog = Dog.new(name, breed)
+    dog = Dog.new(name: name, breed: breed)
     dog.save
     dog
+  end
+
+  def self.find_by_id(id)
+    sql = <<-SQL 
+    SELECT * FROM dogs 
+    WHERE id = ?
+    SQL
+
+    row = DB[:conn].execute(sql,id)[0]
+    Dog.new(id: row[0],name: row[1],breed: row[2])
+
+  end
+
+  def self.find_or_create_by(name:, breed:)
+    sql = <<-SQL 
+    SELECT * FROM dogs
+    WHERE name = ? AND breed = ?
+    SQL
+    row = DB[:conn].execute(sql,name,breed)
+
+    if !row.empty?
+      new_dog = row[0]
+      dog = Dog.new(id: new_dog[0],name: new_dog[1],breed: new_dog[2])
+    else
+      dog = Dog.create(name: name, breed: breed)
+    end
+    dog
+  end
+
+  def self.new_from_db(row)
+    Dog.new(id: row[0],name: row[1],breed: row[2])
+  end
+
+  def self.find_by_name(name)
+    sql = <<-SQL 
+    SELECT * FROM dogs
+    WHERE name = ? 
+    SQL
+    row = DB[:conn].execute(sql,name)[0]
+
+    Dog.new(id: row[0],name: row[1],breed: row[2])
   end
 
 
