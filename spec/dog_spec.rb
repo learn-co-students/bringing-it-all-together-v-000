@@ -122,7 +122,7 @@ describe "Dog" do
   end
 
   describe '#find_by_name' do
-    it 'returns an instance of student that matches the name from the DB' do
+    it 'returns an instance of dog that matches the name from the DB' do
       teddy.save
       teddy_from_db = Dog.find_by_name("Teddy")
 
