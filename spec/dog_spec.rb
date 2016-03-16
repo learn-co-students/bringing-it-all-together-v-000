@@ -28,7 +28,7 @@ describe "Dog" do
       expect(teddy.id).to eq(nil)
     end
 
-    it 'accepts key value pairs as arguments to initialize' do 
+    it 'accepts key value pairs as arguments to initialize' do
       params = {id: 1, name: "Caldwell", breed: "toy poodle"}
 
       dog = Dog.new(params)
