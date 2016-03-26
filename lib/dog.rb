@@ -60,12 +60,6 @@ class Dog
     end
     dog 
   end
- 
-# .find_or_create_by
-# # creates an instance of a dog if it does not already exist 
-# when two dogs have the same name and different breed, 
-#   it returns the correct dog when creating a new dog with the 
-#   same name as persisted dogs, it returns the correct dog  
 
   def self.new_from_db(ary)  
     dog = Dog.new(id: ary[0], name: ary[1], breed: ary[2])
