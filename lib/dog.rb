@@ -11,8 +11,6 @@ class Dog
     @breed = breed
   end
 
-
-  
   def self.create_table
     sql = <<-SQL
       CREATE TABLE IF NOT EXISTS dogs (
@@ -29,10 +27,10 @@ class Dog
       DB[:conn].execute(sql)
     end
 
-    def save
-      if self.id
-        self.update
-      else 
+  def save
+    if self.id
+    self.update
+    else 
         sql = <<-SQL
           INSERT INTO dogs (name, breed)
           VALUES (?, ?)
@@ -89,9 +87,9 @@ class Dog
   end
 
   def update
-    
     sql = "UPDATE dogs SET name = ?, breed = ?, id = ?"
     DB[:conn].execute(sql, self.name, self.breed, self.id)
   end
    
 end
+
