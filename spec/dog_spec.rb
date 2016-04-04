@@ -28,7 +28,7 @@ describe "Dog" do
       expect(teddy.id).to eq(nil)
     end
 
-    it 'accepts key value pairs as arguments to initialize' do 
+    it 'accepts key value pairs as arguments to initialize' do
       params = {id: 1, name: "Caldwell", breed: "toy poodle"}
 
       dog = Dog.new(params)
@@ -129,6 +129,9 @@ describe "Dog" do
       expect(teddy_from_db.name).to eq("Teddy")
       expect(teddy_from_db.id).to eq(1)
       expect(teddy_from_db).to be_an_instance_of(Dog)
+
+      no_dog = Dog.find_by_name("Albert")
+      expect(no_dog).to be_nil
     end
   end
 
