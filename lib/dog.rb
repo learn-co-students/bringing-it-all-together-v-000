@@ -2,10 +2,10 @@ class Dog
 
   attr_accessor :name, :breed, :id
 
-  def initialize(name,breed,id=nil)
+  def initialize(id: nil, name:, breed:)
+    @id = id
     @name = name
     @breed = breed
-    @id = id
   end
 
   def self.create_table
@@ -22,14 +22,16 @@ class Dog
 
   def self.drop_table
     sql = <<-SQL
-      DROP TABLE dogs
+      DROP TABLE IF EXISTS dogs
     SQL
 
     DB[:conn].execute(sql)
   end
 
   def save
-    #
+    if self.id
+      self.update
+    else
       sql = <<-SQL
         INSERT INTO dogs (name,breed)
         VALUES (?,?)
@@ -38,13 +40,13 @@ class Dog
       DB[:conn].execute(sql, self.name, self.breed)
 
       @id = DB[:conn].execute("SELECT last_insert_rowid() FROM dogs")[0][0]
-    #end
+    end
   end
 
   def self.create(name:, breed:)
-    new_dog = Dog.new(name,breed)
-    new_dog.save
-    new_dog
+    dog = Dog.new(name: name, breed: breed)
+    dog.save
+    dog
   end
 
   def self.find_by_id(id)
@@ -52,19 +54,20 @@ class Dog
       SELECT * 
       FROM dogs
       WHERE id = ?
+      LIMIT 1
     SQL
 
-    result = DB[:conn].execute(sql,id)[0]
-
-    Dog.new(result[1],result[2],result[0])
+    DB[:conn].execute(sql,id).map do |row|
+      self.new_from_db(row)
+    end.first
   end
 
   def self.find_or_create_by(name:,breed:)
-    dog = DB[:conn].execute("SELECT * FROM dogs WHERE name = ? AND breed = ?",name,breed)
+    dog = DB[:conn].execute("SELECT * FROM dogs WHERE name = '#{name}' AND breed = '#{breed}'")
 
     if !dog.empty?
       dog_data = dog[0]
-      dog = Dog.new(dog_data[1],dog_data[2],dog_data[0])
+      dog = Dog.new(name: dog_data[1],breed: dog_data[2],id: dog_data[0])
     else
       dog = self.create(name: name, breed: breed)
     end
@@ -72,8 +75,7 @@ class Dog
   end
 
   def self.new_from_db(row)
-    new_dog = Dog.new(row[1],row[2])
-    new_dog.id = row[0]
+    new_dog = Dog.new(name: row[1], breed: row[2],id: row[0])
     new_dog
   end
 
@@ -101,3 +103,4 @@ class Dog
   end
 
 end
+

@@ -3,7 +3,7 @@ require 'pry'
 
 describe "Dog" do
 
-  let(:teddy) {Dog.new("Teddy","cockapoo")}
+  let(:teddy) {Dog.new(name: "Teddy", breed: "cockapoo")}
 
   before(:each) do
     DB[:conn].execute("DROP TABLE IF EXISTS dogs")
@@ -19,7 +19,7 @@ describe "Dog" do
 
   describe "attributes" do
     it 'has a name and a breed' do
-      dog = Dog.new("Fido", "lab")
+      dog = Dog.new(name: "Fido", breed: "lab")
       expect(dog.name).to eq("Fido")
       expect(dog.breed).to eq("lab")
     end
@@ -28,13 +28,13 @@ describe "Dog" do
       expect(teddy.id).to eq(nil)
     end
 
-    # it 'accepts key value pairs as arguments to initialize' do
-    #   params = {id: 1, name: "Caldwell", breed: "toy poodle"}
+    it 'accepts key value pairs as arguments to initialize' do 
+      params = {id: 1, name: "Caldwell", breed: "toy poodle"}
 
-    #   dog = Dog.new(params)
-    #   expect(dog.name).to eq("Caldwell")
-    #   expect(dog.breed).to eq("toy poodle")
-    # end
+      dog = Dog.new(params)
+      expect(dog.name).to eq("Caldwell")
+      expect(dog.breed).to eq("toy poodle")
+    end
   end
 
   describe "#create_table" do
@@ -122,7 +122,7 @@ describe "Dog" do
   end
 
   describe '#find_by_name' do
-    it 'returns an instance of dog that matches the name from the DB' do
+    it 'returns an instance of student that matches the name from the DB' do
       teddy.save
       teddy_from_db = Dog.find_by_name("Teddy")
 
