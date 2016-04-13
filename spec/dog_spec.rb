@@ -28,7 +28,7 @@ describe "Dog" do
       expect(teddy.id).to eq(nil)
     end
 
-    it 'accepts key value pairs as arguments to initialize' do
+    it 'accepts key value pairs as arguments to initialize' do 
       params = {id: 1, name: "Caldwell", breed: "toy poodle"}
 
       dog = Dog.new(params)
@@ -122,7 +122,7 @@ describe "Dog" do
   end
 
   describe '#find_by_name' do
-    it 'returns an instance of dog that matches the name from the DB' do
+    it 'returns an instance of student that matches the name from the DB' do
       teddy.save
       teddy_from_db = Dog.find_by_name("Teddy")
 
