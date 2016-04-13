@@ -58,6 +58,7 @@ describe "Dog" do
       dog = teddy.save
 
       expect(DB[:conn].execute("SELECT * FROM dogs WHERE id = 1")).to eq([[1, "Teddy", "cockapoo"]])
+      expect(dog.id).to eq(1)
     end
   end
 
@@ -66,6 +67,7 @@ describe "Dog" do
       Dog.create(name: "Ralph", breed: "lab")
       expect(DB[:conn].execute("SELECT * FROM dogs")).to eq([[1, "Ralph", "lab"]])
     end
+
     it 'returns a new dog object' do
       dog = Dog.create(name: "Dave", breed: "podle")
 
@@ -91,6 +93,7 @@ describe "Dog" do
 
       expect(dog1.id).to eq(dog2.id)
     end
+    
     it 'when two dogs have the same name and different breed, it returns the correct dog' do
       dog1 = Dog.create(name: 'teddy', breed: 'cockapoo')
       dog2 = Dog.create(name: 'teddy', breed: 'pug')
