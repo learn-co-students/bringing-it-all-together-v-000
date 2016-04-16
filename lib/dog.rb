@@ -87,4 +87,9 @@ class Dog
     dog
   end
 
+  # updates the record associated with a given instance
+  def update
+    DB[:conn].execute("UPDATE dogs SET name = ?, breed = ? WHERE id = ?", self.name, self.breed, self.id)
+  end
+
 end
