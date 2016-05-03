@@ -62,7 +62,7 @@ class Dog
       id = dog_data[0]
       name = dog_data[1]
       breed = dog_data[2]
-      Dog.new(name: name, breed: breed)
+      Dog.new(id: id, name: name, breed: breed)
       #binding.pry
     else
       new_dog = self.create(name: name, breed: breed)
