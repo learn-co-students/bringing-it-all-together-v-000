@@ -1,8 +1,11 @@
-require_relative "../config/environment.rb"
-
+require 'pry'
 class Dog
 
   attr_accessor :name, :breed, :id
+
+  # def initialize(attributes)
+  #   attributes.each {|key, value| self.send(("#{key}="), value)}
+  # end
 
   def initialize(id: nil, name:, breed:)
     # binding.pry
@@ -96,7 +99,6 @@ class Dog
   end
 
 end
-
 
 
 
