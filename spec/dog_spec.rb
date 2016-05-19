@@ -19,6 +19,7 @@ describe "Dog" do
 
   describe "attributes" do
     it 'has a name and a breed' do
+      #binding.pry
       dog = Dog.new(name: "Fido", breed: "lab")
       expect(dog.name).to eq("Fido")
       expect(dog.breed).to eq("lab")
@@ -55,6 +56,7 @@ describe "Dog" do
 
   describe "#save" do
     it 'saves an instance of the dog class to the database and then sets the given dogs `id` attribute' do
+      #binding.pry
       dog = teddy.save
 
       expect(DB[:conn].execute("SELECT * FROM dogs WHERE id = 1")).to eq([[1, "Teddy", "cockapoo"]])
