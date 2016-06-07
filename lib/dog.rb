@@ -38,7 +38,7 @@ class Dog
 
       DB[:conn].execute(sql, self.name, self.breed)
       @id = DB[:conn].execute("SELECT last_insert_rowid() FROM dogs")[0][0]
-      return self # Had to add this in order to ger the test to pass.
+      return self # Had to add this bit in order to get the test to pass.
     end
   end
 
