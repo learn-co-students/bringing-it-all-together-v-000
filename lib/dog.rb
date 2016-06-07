@@ -28,14 +28,18 @@ class Dog
   end
 
   def save
-    sql = <<-SQL
-      INSERT INTO dogs(name, breed)
-      VALUES (?, ?)
-    SQL
+    if self.id
+      self.update
+    else
+      sql = <<-SQL
+        INSERT INTO dogs(name, breed)
+        VALUES (?, ?)
+      SQL
 
-    DB[:conn].execute(sql, self.name, self.breed)
-    @id = DB[:conn].execute("SELECT last_insert_rowid() FROM dogs")[0][0]
-    return self # Had to add this in order to ger the test to pass.
+      DB[:conn].execute(sql, self.name, self.breed)
+      @id = DB[:conn].execute("SELECT last_insert_rowid() FROM dogs")[0][0]
+      # return self # Had to add this in order to ger the test to pass.
+    end
   end
 
   def self.create(hash)
