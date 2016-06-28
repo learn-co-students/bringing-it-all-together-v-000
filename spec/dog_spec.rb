@@ -54,11 +54,11 @@ describe "Dog" do
   end
 
   describe "#save" do
-    it 'saves an instance of the dog class to the database and then sets the given dogs `id` attribute' do
-      dog = teddy.save
+    it "saves an instance of the dog class to the database and then sets the given dogs `id` attribute" do
+      id_attribute = teddy.save
 
       expect(DB[:conn].execute("SELECT * FROM dogs WHERE id = 1")).to eq([[1, "Teddy", "cockapoo"]])
-      expect(dog.id).to eq(1)
+      expect(id_attribute).to eq(1)
     end
   end
 
