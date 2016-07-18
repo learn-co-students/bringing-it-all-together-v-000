@@ -107,14 +107,14 @@ describe "Dog" do
       expect(dog_from_db.id).to eq(1)
       expect(dog_from_db.id).to eq(dog1.id)
     end
-    # it 'when creating a new dog with the same name as persisted dogs, it returns the correct dog' do
-    #   dog1 = Dog.create(name: 'teddy', breed: 'cockapoo')
-    #   dog2 = Dog.create(name: 'teddy', breed: 'pug')
-    #
-    #   new_dog = Dog.find_or_create_by({name: 'teddy', breed: 'irish setter'})
-    #
-    #   expect(new_dog.id).to eq(3)
-    # end
+    it 'when creating a new dog with the same name as persisted dogs, it returns the correct dog' do
+      dog1 = Dog.create(name: 'teddy', breed: 'cockapoo')
+      dog2 = Dog.create(name: 'teddy', breed: 'pug')
+
+      new_dog = Dog.find_or_create_by({name: 'teddy', breed: 'irish setter'})
+
+      expect(new_dog.id).to eq(3)
+    end
   end
 
   describe '#new_from_db' do
