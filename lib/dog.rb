@@ -55,19 +55,17 @@ attr_reader :id
     self.new(id: new_dog[0], name: new_dog[1], breed: new_dog[2])
   end
 
-  # def self.find_or_create_by(name:, breed:)
-  #   if Dog.id
-  #     sql = <<-SQL
-  #       SELECT * FROM dogs
-  #       WHERE name = ?, breed = ?
-  #     SQL
+  def self.find_or_create_by(name:, breed:)
+    dog = DB[:conn].execute("SELECT * FROM dogs WHERE name = ? AND breed = ?", name, breed)
+    if !dog.empty?
 
-  #     DB[:conn].execute(sql, name, breed)
-  #   else
-  #     #create
-  #     puts "create"
-  #   end
-  # end
+      new_dog = dog[0]
+      dog = Dog.new(id: new_dog[0], name: new_dog[1], breed: new_dog[2])
+    else
+      dog = self.create(name: name, breed: breed)
+    end
+    dog
+  end
 
   def self.new_from_db(row)
     dog = self.new(id: row[0], name: row[1], breed: row[2])
@@ -85,7 +83,13 @@ attr_reader :id
   end
 
   def update
+    sql = <<-SQL
+      UPDATE dogs
+      SET name = ?, breed = ?
+      WHERE id = ?
+    SQL
 
+    DB[:conn].execute(sql, self.name, self.breed, self.id)
   end
 
 
