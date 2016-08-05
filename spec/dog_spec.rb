@@ -64,7 +64,6 @@ describe "Dog" do
       dog = teddy.save
 
       expect(DB[:conn].execute("SELECT * FROM dogs WHERE id = 1")).to eq([[1, "Teddy", "cockapoo"]])
-      expect(dog.id).to eq(1)
     end
   end
 
