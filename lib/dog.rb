@@ -2,10 +2,10 @@ class Dog
 	attr_accessor :name, :breed
 	attr_reader :id
 
-	def initialize(attributes, id=nil)
-		@name = attributes[:name]
-		@breed = attributes[:breed]
-		@id = id
+	def initialize(attributes, id=nil) #i can do either attributes or attributes={} w/same results
+		@name = attributes[:name] #:name key
+		@breed = attributes[:breed] #:breed key
+		@id = id #id starts nil because once it's added to table then id primary key is added
 	end
 
 	def self.create_table
@@ -26,11 +26,13 @@ class Dog
 	end
 
 	def save
+		#bound parameters uses the ? character as a placeholder for entered values
 		sql = <<-SQL
 		INSERT INTO dogs (name, breed)
 		VALUES (?, ?)
 		SQL
 		DB[:conn].execute(sql, @name, @breed)
+		#@id = the last primary key from the table entered by sql for last entered row
 		@id = DB[:conn].execute("SELECT id FROM dogs where name = ? AND breed = ?", @name, @breed)[0][0]
 		self
 	end
@@ -50,6 +52,7 @@ class Dog
 	end
 
 	def self.find_by_id(id)
+		#bound parameters uses the ? character as a placeholder for entered values
 		sql = <<-SQL
 		SELECT *
 		FROM dogs
@@ -59,9 +62,10 @@ class Dog
 	end
 
 	def self.find_or_create_by(hash)
+		#bound parameters uses the ? character as a placeholder for entered values
 		sql = <<-SQL
 		SELECT *
-		FROM dogs 
+		FROM dogs
 		WHERE name = ? AND breed = ?
 		SQL
 		dog = DB[:conn].execute(sql, hash[:name], hash[:breed])[0]
@@ -73,6 +77,7 @@ class Dog
 	end
 
 	def self.find_by_name(name)
+		#bound parameters uses the ? character as a placeholder for entered values
 		sql = <<-SQL
 		SELECT *
 		FROM dogs
@@ -82,6 +87,7 @@ class Dog
 	end
 
 	def update
+		#bound parameters uses the ? character as a placeholder for entered values
 		sql = <<-SQL
 		UPDATE dogs
 		SET name = ?, breed = ?
