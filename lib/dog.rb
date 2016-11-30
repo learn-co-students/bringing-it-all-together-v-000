@@ -29,9 +29,9 @@ class Dog
   end
 
   def save
-    if self.id
+    if self.id #Only updates the object if the object id for an instance exists (meaning it was already added to the DB)
       self.update
-    else
+    else #Adds the instance object to the DB
       sql = <<-SQL
         INSERT INTO dogs (name, breed)
         VALUES (?, ?);
@@ -43,7 +43,7 @@ class Dog
     self
   end
 
-  def self.create(name:, breed:)
+  def self.create(name:, breed:) #Initializes and saves a new object to the DB if it doesn't exist already
     new_dog = self.new(name: name, breed: breed)
     new_dog.save
     new_dog
@@ -60,7 +60,7 @@ class Dog
     end.first
   end
 
-  def self.find_or_create_by(name:, breed:)
+  def self.find_or_create_by(name:, breed:) #Finds an exact dog from the DB if it exists or creates a new one
     dog_array = DB[:conn].execute("SELECT * FROM dogs WHERE name = ? AND breed = ?;", name, breed).flatten
     if !dog_array.empty?
       dog = Dog.new(id: dog_array[0], name: dog_array[1], breed: dog_array[2])
