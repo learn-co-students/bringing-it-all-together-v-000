@@ -1,8 +1,16 @@
 class Dog
 
-  attr_accessor :name, :breed, :id
+  ATTRIBUTES = {
+    :id => "INTEGER PRIMARY KEY",
+    :name => "TEXT",
+    :breed => "TEXT"
+  }
 
-  def initialize(id=nil, name:, breed:)
+  ATTRIBUTES.keys.each do |attribute_name|
+    attr_accessor attribute_name
+  end
+
+  def initialize(id: nil, name:, breed:)
     @id = id
     @name = name
     @breed = breed
@@ -29,16 +37,18 @@ class Dog
   end
 
   def save
-    if self.id
-      self.update
-    else
-    sql = <<-SQL
-      INSERT INTO dogs (name, breed)
-      VALUES (?, ?)
-    SQL
+      if self.id
+        self.update
+      else
+        sql = <<-SQL
+          INSERT INTO dogs (name, breed)
+          VALUES (?, ?)
+        SQL
 
-    DB[:conn].execute(sql, self.name, self.breed)
-    @id = DB[:conn].execute("SELECT last_insert_rowid() FROM dogs")[0][0]
+        DB[:conn].execute(sql, self.name, self.breed)
+        @id = DB[:conn].execute("SELECT last_insert_rowid() FROM dogs")[0][0]
+        end
+    self
   end
 
   def self.create(name:, breed:)
@@ -75,12 +85,11 @@ class Dog
   end
 
   def self.new_from_db(row)
-    new_dog = self.new
-    new_dog.id = row[0]
-    new_dog.name = row[1]
-    new_dog.breed = row[2]
-    dog.save
-    dog
+    self.new.tap do |d|
+      ATTRIBUTES.keys.each.with_index do |attribute_name, i|
+        d.send("#{attribute_name}=", row[i])
+      end
+    end
   end
-end
+
 end
