@@ -1,6 +1,5 @@
 class Dog
 
-
 attr_accessor :name, :breed
 attr_reader :id
 
@@ -18,14 +17,13 @@ attr_reader :id
     breed TEXT
     )
     SQL
-
       DB[:conn].execute(sql)
   end
 
   def self.drop_table
     sql =  <<-SQL
     DROP TABLE dogs
-      SQL
+    SQL
       DB[:conn].execute(sql)  
   end
 
@@ -35,10 +33,9 @@ attr_reader :id
       (name, breed)  
       VALUES (?, ?)
       SQL
-    
-      DB[:conn].execute(sql, self.name, self.breed) 
-      @id = DB[:conn].execute("SELECT last_insert_rowid() FROM dogs")[0][0]    
-    self  
+        DB[:conn].execute(sql, self.name, self.breed) 
+        @id = DB[:conn].execute("SELECT last_insert_rowid() FROM dogs")[0][0]    
+          self  
    end
 
 
@@ -54,26 +51,25 @@ attr_reader :id
    end
 
    def self.find_by_id(id)
-    
      sql = <<-SQL
      SELECT *
      FROM dogs
      WHERE id = ?
       SQL
-          
-       DB[:conn].execute(sql, id).map do |array|
+                    
+        DB[:conn].execute(sql,id).map do |array|
          self.new_from_db(array) 
        end.first
-  end
+    end
 
     def self.find_or_create_by(name:, breed:)
        dog = DB[:conn].execute("SELECT * FROM dogs WHERE name = ? AND breed = ?", name, breed)
-       if !dog.empty?
-         dog_data = dog[0]
-        Dog.new(id:dog_data[0], name:dog_data[1], breed:dog_data[2])
-       else
-         self.create(name: name, breed: breed)
-       end     
+         if !dog.empty?
+           dog_data = dog[0]
+            Dog.new(id:dog_data[0], name:dog_data[1], breed:dog_data[2])
+         else
+           self.create(name: name, breed: breed)
+         end     
      end 
 
      def self.find_by_name(name)
@@ -82,9 +78,8 @@ attr_reader :id
          FROM dogs
          WHERE name = ?
           SQL
-
-          DB[:conn].execute(sql,name).map do |row|
-           self.new_from_db(row)
+            DB[:conn].execute(sql,name).map do |row|
+              self.new_from_db(row)
          end.first
        end
       
@@ -94,12 +89,10 @@ attr_reader :id
        SET name = ?, breed = ? 
        WHERE id = ?
        SQL
-           DB[:conn].execute(sql, self.name, self.breed, self.id)
+         DB[:conn].execute(sql, self.name, self.breed, self.id)
      end
 
 
-  
 
-  
 end
 
