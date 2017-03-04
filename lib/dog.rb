@@ -37,10 +37,11 @@ class Dog
       row = DB[:conn].execute(sql, self.name, self.breed)[0]
       @id = DB[:conn].execute("SELECT last_insert_rowid() FROM dogs")[0][0]
     end
+    self #have to return the newly stored instance to reflect creation
   end
 
   def self.create(name: name, breed: breed)
-    dog = self.new(name, breed)
+    dog = self.new(name: name, breed: breed)
     dog.save
     dog
   end
@@ -53,23 +54,46 @@ class Dog
 
     row = DB[:conn].execute(sql, id)[0]
     dog_instance = self.new(id: row[0], name: row[1], breed: row[2])
-  end
+   end
 
-  def self.find_or_create_by(name, breed)
+  def self.find_or_create_by(name: name, breed: breed)
     sql = <<-SQL
-    SELECT * FROM dogs (name, breed)
-    WHERE name=(?), breed=(?)
+    SELECT * FROM dogs
+    WHERE name=(?) AND breed=(?)
     SQL
 
-    query = DB[:conn].execute(sql, name, breed)[0]
+    query = DB[:conn].execute(sql, name, breed)
 
     if query.empty?
-      dog = self.new(name: name, breed: breed)
-      dog.save
+      query = self.create(name: name, breed: breed)
     else
-      dog = self.new(id: query[0], name: query[1], breed: query[2])
-      dog
+      dog_instance = query[0]
+      query = self.new(id: dog_instance[0], name: dog_instance[1], breed: dog_instance[2])
     end
+      query
   end
+  #
+  # def self.new_from_db(row)
+  #   dog = self.new(id: row[0], name: row[1], breed: row[2])
+  # end
+  #
+  # def self.find_by_name(dog)
+  #   sql = <<-SQL
+  #         SELECT * FROM dogs
+  #         WHERE name=(?)
+  #         SQL
+  #
+  #   row = DB[:conn].execute(sql, dog)[0]
+  #   instance = self.new(id: row[0], name: row[1], breed: row[2]
+  # end
+  #
+  # def update
+  #   sql = <<-SQL
+  #   UPDATE dogs SET name=(?), breed=(?)
+  #   WHERE id=(?)
+  #   SQL
+  #
+  #   DB[:conn].execute(sql, self.name, self.breed, self.id)
+  # end
 
 end
