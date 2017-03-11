@@ -58,7 +58,6 @@ class Dog
     dog_info = DB[:conn].execute("SELECT * FROM dogs WHERE id = ?", id).flatten
     new_dog = Dog.new(name: dog_info[1], breed: dog_info[2], id: dog_info[0])
     new_dog.save
-    # binding.pry
     new_dog
   end
 
