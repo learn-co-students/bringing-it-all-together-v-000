@@ -21,8 +21,8 @@ def save
 self # now we are returning our newly instantiated object
 end
 
-def self.create(dog_hash)
-  Dog.new(dog_hash).save
+def self.create(name:,breed:)
+  Dog.new(name:name,breed:breed).save
 end
 
 def self.find_by_id(id)
@@ -30,4 +30,28 @@ def self.find_by_id(id)
  #binding.pry
  Dog.new(id:dog[0],name:dog[1],breed: dog[2])
 end
+
+def self.find_or_create_by(name:,breed:)
+  dog = DB[:conn].execute("SELECT * FROM dogs WHERE name = ? AND breed = ?",name,breed)
+  if !dog.empty? # means if a record exist
+    dog1 = dog[0]
+     dog1 = Dog.new(id:dog1[0],name:dog1[1],breed:dog1[2])
+   else
+     dog1 = self.create(name: name, breed: breed)
+   end
+      dog1
+  end
+
+  def update
+    DB[:conn].execute("UPDATE dogs SET name = ?,breed = ? WHERE id = ?",self.name,self.breed,self.id)
+  end
+
+  def self.new_from_db(row)
+    Dog.new(id:row[0],name:row[1],breed:row[2])
+  end
+    
+  def self.find_by_name(name)
+    dog = DB[:conn].execute("SELECT * FROM dogs WHERE name = ?",name)[0]
+    dog_obj = Dog.new(id:dog[0],name:dog[1],breed:dog[2])
+    end
 end
