@@ -72,21 +72,15 @@ class Dog
   end
 
   def self.find_or_create_by(name:, breed:)
-    # if !self.find_by_name(name)
-    #   puts "A"
-    #   self.create
-    # else
-    #   puts "B"
-    #   self.find_by_name(name)
-    # end
-    binding.pry
-    if self.id
-      self.find_by_id(id)
+
+   dog = DB[:conn].execute("SELECT * FROM dogs WHERE name = ? AND breed = ?", name, breed).first
+    if dog.nil?
+      dog = self.new(name: name, breed: breed)
+      dog.save
     else
-      self.create
-
+      dog = Dog.new(name: dog[1], breed: dog[2], id: dog[0])
     end
-
+    dog
   end
 
   def self.find_by_name(name)
@@ -100,8 +94,17 @@ class Dog
 
       DB[:conn].execute(sql, name).collect do |row|
         self.new_from_db(row)
-      end.first
-
+    end.first
   end
 
+  def update
+    sql = <<-SQL
+    UPDATE dogs
+    SET name = ?, breed = ?
+    WHERE id = ?
+    SQL
+
+    DB[:conn].execute(sql, self.name, self.breed, self.id)
+
+  end
 end
