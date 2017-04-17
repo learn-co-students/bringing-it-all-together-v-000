@@ -149,5 +149,5 @@ describe "Dog" do
     end
 
   end
-
+# binding.pry
 end
