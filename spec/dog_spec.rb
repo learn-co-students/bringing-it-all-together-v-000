@@ -142,6 +142,7 @@ describe "Dog" do
   describe '#update' do
     it 'updates the record associated with a given instance' do
       teddy.save
+      #pry.binding
       teddy.name = "Teddy Jr."
       teddy.update
       teddy_jr = Dog.find_by_name("Teddy Jr.")
