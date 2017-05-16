@@ -1,3 +1,6 @@
+require 'bundler'
+Bundler.require
+require 'pry'
 require 'sqlite3'
 require_relative '../lib/dog'
 
