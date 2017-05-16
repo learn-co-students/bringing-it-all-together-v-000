@@ -76,11 +76,17 @@ class Dog
    def self.find_by_name(name)
     sql = "SELECT * FROM #{self.table_name} WHERE name = ?"
     row = DB[:conn].execute(sql, name)[0]
+
     self.new_from_db(row)
   end
 
   def update
-    sql = "UPDATE #{self.class.table_name} SET name = ?, breed = ? WHERE id = ?" # update all attributes based on the unique ID
+    # update all attributes based on the unique ID
+    sql = <<-SQL
+      UPDATE #{self.class.table_name}
+      SET name = ?, breed = ?
+      WHERE id = ?
+    SQL
     DB[:conn].execute(sql, self.name, self.breed, self.id)
   end
 
