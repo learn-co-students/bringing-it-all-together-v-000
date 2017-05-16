@@ -74,7 +74,7 @@ describe "Dog" do
       expect(DB[:conn].execute("SELECT * FROM dogs")).to eq([[1, "Ralph", "lab"]])
     end
     it 'returns a new dog object' do
-      dog = Dog.create(name: "Dave", breed: "podle")
+      dog = Dog.create(name: "Dave", breed: "poodle")
 
       expect(teddy).to be_an_instance_of(Dog)
       expect(dog.name).to eq("Dave")
