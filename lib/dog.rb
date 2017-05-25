@@ -49,11 +49,7 @@ class Dog
       SELECT * FROM #{self.table_name} WHERE name = ? AND breed = ?;
     SQL
     res = DB[:conn].execute(sql, name, breed)
-    if res.size > 0
-      return res.map{|row| self.new_from_db(row)}.first
-    else
-      return self.create(name: name, breed: breed)
-    end
+    res.size > 0 ? res.map{|row| self.new_from_db(row)}.first : self.create(name: name, breed: breed)
   end
   # Genreate the table name
   def self.table_name
