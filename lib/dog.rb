@@ -1,4 +1,3 @@
-require "pry"
 class Dog
   attr_accessor :name, :breed
   attr_reader :id
@@ -60,17 +59,10 @@ class Dog
       dog = self.create(name: name, breed: breed)
     end
     dog
-
-    # if self.find_by_name(name) == nil
-    #   self.create(attributes)
-    # elsif (self.find_by_name(name)).breed == breed
-    #   self.find_by_name
-    # end
   end
 
   def self.new_from_db(row)
     dog = self.new(name:row[1], breed:row[2], id:row[0])
-    # dog
   end
 
   def self.find_by_name(name)
