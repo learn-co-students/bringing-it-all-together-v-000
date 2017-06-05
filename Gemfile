@@ -8,3 +8,8 @@ gem 'rspec'
 
 # Debugging
 gem 'pry'
+
+#easy pry
+gem 'rake'
+
+gem 'require_all'
