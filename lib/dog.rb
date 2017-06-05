@@ -93,14 +93,14 @@ def self.find_by_id(id)
     end
 end
 
-def self.find_by_name(arguments)
+def self.find_by_name(name)
     
     sql = <<-SQL
           SELECT * from dogs where name = ?
           SQL
 
-    if DB[:conn].execute(sql, arguments[:name])
-          Dog.new_from_db(DB[:conn].execute(sql, arguments[:name])[0])
+    if !DB[:conn].execute(sql, name).empty?
+          Dog.new_from_db(DB[:conn].execute(sql, name)[0])
     end
 end
 
