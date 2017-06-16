@@ -56,7 +56,6 @@ describe "Dog" do
   describe "#save" do
     it 'returns an instance of the dog class' do
       dog = teddy.save
-
       expect(dog).to be_instance_of(Dog)
     end
 
