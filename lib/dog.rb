@@ -40,6 +40,11 @@ class Dog
       end
   end
 
+  def self.create(hash)
+    binding.pry
+    dog_instance = self.new(hash)
+    dog_instance.save
+  end
   def self.new_from_db(row)
     object_instance = self.new(row[0], row[1], row[2])
     object_instance
