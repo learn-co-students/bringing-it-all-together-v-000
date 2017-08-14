@@ -24,11 +24,23 @@ class Dog
     DB[:conn].execute(sql)
   end # drop_table
 
+  def save
+    sql = <<-SQL
+    INSERT INTO dogs (name, breed)
+    VALUES (?, ?)
+    SQL
+
+    DB[:conn].execute(sql, self.name, self.breed)
+    @id = DB[:conn].execute("SELECT LAST_INSERT_ROWID() FROM dogs")[0][0]
+    self
+  end # save
+
+  def self.create(name:, breed:)
+    Dog.new(name: name, breed: breed).save
+  end # create
+
   def self.new_from_db(array)
     dog = Dog.new(id: array[0], name: array[1], breed: array[2])
   end # new_from_db
-
-  def save
-  end # save
 
 end
