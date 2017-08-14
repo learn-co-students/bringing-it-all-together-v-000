@@ -24,4 +24,11 @@ class Dog
     DB[:conn].execute(sql)
   end # drop_table
 
+  def self.new_from_db(array)
+    dog = Dog.new(id: array[0], name: array[1], breed: array[2])
+  end # new_from_db
+
+  def save
+  end # save
+
 end
