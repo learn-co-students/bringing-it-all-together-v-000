@@ -1,4 +1,5 @@
 class Dog
+
   attr_accessor :name, :breed
   attr_reader :id
 
@@ -17,4 +18,10 @@ class Dog
 
     DB[:conn].execute(sql)
   end # create_table
+
+  def self.drop_table
+    sql = "DROP TABLE dogs"
+    DB[:conn].execute(sql)
+  end # drop_table
+
 end
