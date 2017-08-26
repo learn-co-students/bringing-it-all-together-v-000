@@ -1,10 +1,13 @@
-#!/usr/local/bin/ruby -w
+#!/usr/local/bin/ ruby 
 
-load "./config/environment.rb"
+
+require 'sqlite3'
+load "./lib/dog.rb"
+DB = {:conn => SQLite3::Database.new("db/dogs.db")}
 
 def reload!
-  puts "reloading..."
-  load "./config/environment.rb"
+  puts "reloading...\n\n\n"
+  load './lib/dog.rb'
 end
 
 pry.start
