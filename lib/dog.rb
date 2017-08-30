@@ -13,6 +13,7 @@ class Dog
      sql = <<-SQL
      DROP TABLE IF EXISTS dogs
      SQL
+
      DB[:conn].execute(sql)
   end
 
@@ -62,7 +63,40 @@ class Dog
     LIMIT 1
     SQL
 
-    DB[:conn].execute(sql, id)
+    DB[:conn].execute(sql, id).collect do |row|
+        hash = {:id => row[0], :name => row[1], :breed => row[2]}
+        self.new(hash)
+    end.first
+  end
+
+  def self.find_or_create_by(hash)
+    dog = DB[:conn].execute("SELECT * FROM dogs WHERE name = ? AND breed = ?", hash[:name], hash[:breed])
+    if !dog.empty?
+      dog_data = dog[0]
+      dog = Dog.new_from_db(dog_data)
+    else
+      dog = self.create(hash)
+    end
+    dog
+  end
+
+  def self.find_by_name(name)
+    sql = <<-SQL
+    SELECT * FROM dogs
+    WHERE name = ?
+    LIMIT 1
+    SQL
+
+    DB[:conn].execute(sql, name).collect do |row|
+        hash = {:id => row[0], :name => row[1], :breed => row[2]}
+        self.new(hash)
+    end.first
+  end
+
+  def self.new_from_db(row)
+    hash = {:id => row[0], :name => row[1], :breed => row[2]}
+    dog = Dog.new(hash)
+    dog
   end
 
 end
