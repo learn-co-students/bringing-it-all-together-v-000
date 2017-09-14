@@ -27,7 +27,7 @@ class Dog
   end
 
   def save
-    if self.id
+    if self.id != nil
       self.update
     else
       sql = <<-SQL
@@ -42,16 +42,15 @@ class Dog
     end
   end
 
-  def self.create(hash)
-    self.new([name:], [breed:])
-    attributes.each {|key, value| self.send(("#{key}="), value)}
-
+  def self.create(attributes)
+    new_dog_attributes = attributes.each {|k,v| instance_variable_set("@#{k}",v)}
+    new_dog = self.new(new_dog_attributes)
     new_dog.save
     new_dog
   end
 
   def self.new_from_db(row)
-    self.new(row[1], row[2], row[0])
+    self.new(name: row[1], breed: row[2], id: row[0])
   end
 
   def self.find_by_name(name)
@@ -61,17 +60,21 @@ class Dog
       WHERE name = ?
     SQL
 
-    DB[:conn].execute(sql, self.name)
+    DB[:conn].execute(sql, name).map do |row|
+      self.new_from_db(row)
+    end.first
   end
 
-  def self.find_by_name(id)
+  def self.find_by_id(id)
     sql = <<-SQL
       SELECT *
       FROM dogs
       WHERE id = ?
     SQL
 
-    DB[:conn].execute(sql, self.id)
+    DB[:conn].execute(sql, id).map do |row|
+      self.new_from_db(row)
+    end.first
   end
 
   def update
@@ -79,10 +82,10 @@ class Dog
   end
 
   def self.find_or_create_by(name:, breed:)
-    dog = DB[:conn].execute("SELECT * FROM dogs WHERE name = ? AND breed = ?", name, breed)
+    dog = DB[:conn].execute("SELECT * FROM dogs WHERE name = '#{name}' AND breed = '#{breed}'")
     if !dog.empty?
       dog_data = dog[0]
-      dog = Dog.new(dog_data[1], dog_data[2], dog_data[0])
+      dog = Dog.new(name: dog_data[1], breed: dog_data[2], id: dog_data[0])
     else
       dog = self.create(name: name, breed: breed)
     end
