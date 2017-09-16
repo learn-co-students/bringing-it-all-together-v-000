@@ -1,9 +1,9 @@
 require 'pry'
 class Dog
   attr_accessor :name, :breed
-  attr_reader :id # shouldn't this be an accessor?
+  attr_reader :id # shouldn't this be an accessor? # works, but soln has it as accessor
 
-  def initialize(id: nil, name: name, breed: breed)
+  def initialize(id: nil, name:, breed:)
     @id = id
     @name = name
     @breed = breed
@@ -55,7 +55,7 @@ class Dog
     self.new(id: id, name: name, breed: breed)
   end
 
-  def self.find_or_create_by(name: name, breed: breed)
+  def self.find_or_create_by(name:, breed:)
     sql = <<-SQL
         SELECT * FROM dogs
         WHERE name = ? AND breed = ?
@@ -71,7 +71,8 @@ class Dog
 
   def self.find_by_name(dog_name)
     sql = <<-SQL
-      SELECT * FROM dogs
+      SELECT *
+      FROM dogs
       WHERE name = ?
     SQL
     id, name, breed = DB[:conn].execute(sql, dog_name).first
@@ -84,7 +85,8 @@ class Dog
   end
 
   def self.new_from_db(row) # [1, "Pat", "poodle"]
-    self.new(id:row[0],name:row[1], breed:row[2])
+    id, name, breed = row
+    self.new(id:id,name:name, breed:breed)
   end
 
 end
