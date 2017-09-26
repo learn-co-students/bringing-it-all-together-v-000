@@ -3,13 +3,13 @@ require_relative "../config/environment.rb"
 class Dog
 
   attr_accessor :id, :name, :breed
-  @@all = []
+  #@@all = []
 
   def initialize(id: nil, name:, breed:)
     @id = id
     @name = name
     @breed = breed
-    @@all << self
+    #@@all << self
   end
 
   def self.table_name
@@ -29,7 +29,11 @@ class Dog
   end
 
   def self.drop_table
-    sql = "DROP TABLE IF EXISTS dogs"
+    #binding.pry
+    sql = <<-SQL
+      DROP TABLE IF EXISTS dogs
+    SQL
+
     DB[:conn].execute(sql)
   end
 
@@ -37,6 +41,7 @@ class Dog
     if self.id
       update
     else
+      #binding.pry
     sql = <<-SQL
       INSERT INTO #{self.table_name} (name, breed)
       VALUES (?, ?)
