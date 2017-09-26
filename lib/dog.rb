@@ -64,7 +64,24 @@ end
     end
   end
 
-  def self.find_or_create_by
+  def self.find_or_create_by(dog_hash)
+    dog_name = dog_hash[:name]
+    dog_breed = dog_hash[:breed]
+
+    if found_dog = self.find_by_name(dog_name)
+       if self.find_by_name(dog_name).breed == dog_breed
+         self.find_by_name(dog_name)
+       else
+         new_dog = self.create(dog_hash)
+         new_dog.save
+         new_dog
+       end
+    else
+      new_dog = self.create(dog_hash)
+      new_dog.save
+      new_dog
+    end
+
   end
 
   def self.new_from_db(row)
@@ -76,7 +93,7 @@ end
     new_dog
   end
 
-  def find_by_name(name)
+  def self.find_by_name(name)
     self.all.each do |dog|
      if dog.name == name
       return dog
@@ -85,5 +102,7 @@ end
   end
 
   def update
+    sql = "UPDATE dogs SET name = ?, breed = ? WHERE id = ?"
+    DB[:conn].execute(sql, self.name, self.breed, self.id)
   end
 end
