@@ -1,7 +1,6 @@
 require 'pry'
 class Dog
-attr_accessor :name, :breed
-attr_reader :id
+attr_accessor :name, :breed, :id
 
   def initialize(id: nil, name:, breed:)
     @name = name
@@ -13,11 +12,10 @@ attr_reader :id
     sql = <<-SQL
       CREATE TABLE IF NOT EXISTS dogs (
         id INTEGER PRIMARY KEY,
-        name, TEXT,
+        name TEXT,
         breed TEXT
       )
     SQL
-
     DB[:conn].execute(sql)
   end
 
@@ -27,7 +25,9 @@ attr_reader :id
   end
 
   def self.create(name:, breed:)
-    Dog.new(name:name, breed:breed).save
+    dog = self.new(name:name, breed:breed)
+    dog.save
+    dog
   end
 
   def self.find_by_id(id)
@@ -41,7 +41,7 @@ attr_reader :id
   end
 
   def self.new_from_db(row)
-     Dog.new(id:row[0],name:row[1], breed:row[2])
+     self.new(id:row[0],name:row[1], breed:row[2])
   end
 
   def save
@@ -54,9 +54,9 @@ attr_reader :id
       SQL
 
       DB[:conn].execute(sql, self.name, self.breed)
-      @id = DB[:conn].execute("SELECT id FROM dogs WHERE name = ?", self.name)[0].first
-      self
+      @id = DB[:conn].execute("SELECT last_insert_rowid() FROM dogs")[0][0]
     end
+    self
   end
 
   def self.find_by_name(name)
@@ -71,14 +71,12 @@ attr_reader :id
   end
 
   def self.find_or_create_by(name:, breed:)
-    dog = DB[:conn].execute("SELECT * FROM dogs WHERE name = ? AND breed = ?", name, breed)
-    binding.pry
+    dog = DB[:conn].execute("SELECT * FROM dogs WHERE name = '#{name}' AND breed = '#{breed}'")
     if !dog.empty?
       row = dog[0]
-      dog = Dog.new_from_db(row)
+      self.new_from_db(row)
     else
-      dog = Dog.create(name:name, breed:breed)
-      binding.pry
+      dog = self.create(name:name, breed:breed)
     end
   end
 
