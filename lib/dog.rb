@@ -1,3 +1,4 @@
+require 'pry'
 class Dog
 attr_accessor :name, :breed
 attr_reader :id
@@ -63,17 +64,21 @@ attr_reader :id
       SELECT * from dogs
       WHERE name = ?
     SQL
-
     row = DB[:conn].execute(sql, name)[0]
-    self.new_from_db(row)
+    if !row.nil?
+      self.new_from_db(row)
+    end
   end
 
   def self.find_or_create_by(name:, breed:)
-    if !self.find_by_name(name)
-      self.create(name, breed)
+    dog = DB[:conn].execute("SELECT * FROM dogs WHERE name = ? AND breed = ?", name, breed)
+    binding.pry
+    if !dog.empty?
+      row = dog[0]
+      dog = Dog.new_from_db(row)
     else
-      row = DB[:conn].execute("SELECT * FROM dogs WHERE name = ? AND breed = ?", name, breed).first
-      self.new_from_db(row)
+      dog = Dog.create(name:name, breed:breed)
+      binding.pry
     end
   end
 
