@@ -78,4 +78,14 @@ class Dog
     row = DB[:conn].execute(sql, name).flatten
     self.new(id: row[0], name: row[1], breed: row[2])
   end
+
+  def update
+    sql = <<-SQL
+      UPDATE dogs
+      SET name = ?, breed = ?
+      WHERE id = ?
+    SQL
+
+    DB[:conn].execute(sql, self.name, self.breed, self.id)
+  end
 end
