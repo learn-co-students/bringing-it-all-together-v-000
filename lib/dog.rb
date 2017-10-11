@@ -1,12 +1,12 @@
 require 'pry'
 
 class Dog
-  attr_accessor :name, :breed
-  attr_reader :id
+  attr_accessor :name, :breed, :id
+  # attr_reader :id
 
-  def initialize(id: nil, name:, breed:)
-    # DOESN'T WORK: hash.map { |key, value| self.send("#{key}=", value) }
-    @id, @name, @breed = id, name, breed
+  def initialize(hash)
+    hash.map { |key, value| self.send("#{key}=", value) }
+    # @id, @name, @breed = id, name, breed
   end
 
   ## Class Methods ##
