@@ -54,21 +54,20 @@ class Dog
     sql = "SELECT * FROM dogs WHERE name = ? AND breed = ?"
     dog = DB[:conn].execute(sql, name, breed)
 
-    dog_info = dog[0]
+    row = dog[0]
 
     if !dog.empty?
-      dog = self.new(id: dog_info[0], name: dog_info[1], breed: dog_info[2])
+      self.new_from_db(row)
     else
-      dog = self.create(name: name, breed: breed)
+      self.create(name: name, breed: breed)
     end
-    dog
   end
 
   ## Instance Methods ##
 
   def update
     sql = "UPDATE dogs SET name = ?, breed = ? WHERE id = ?"
-    
+
     DB[:conn].execute(sql, self.name, self.breed, self.id)
   end
 
