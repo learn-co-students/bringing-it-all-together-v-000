@@ -56,7 +56,7 @@ class Dog
   end
 
   def self.find_or_create_by(name:, breed:)
-
+    #must not be name = ?, breed = ?
     search = DB[:conn].execute("SELECT * FROM dogs WHERE name = ? AND breed = ?", name, breed)
 
     if !search.empty?
@@ -86,6 +86,7 @@ class Dog
   end
 
   def update
+    #must not be name = ? AND breed = ?
     dogs = <<-SQL
     UPDATE dogs SET name = ?, breed = ? WHERE id = ?
     SQL
