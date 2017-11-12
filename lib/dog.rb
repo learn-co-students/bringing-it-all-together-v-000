@@ -40,10 +40,30 @@ class Dog
     end
   end
 
-  def self.create(name, breed)
-    dog = Dog.new(name, breed)
+  def self.create(name:, breed:)
+    dog = Dog.new(name: name, breed: breed)
     dog.save
     dog
+  end
+
+  def self.new_from_db(row)
+    new_dog = self.new
+    new_dog.id = row[0]
+    new_dog.name = row[1]
+    new_dog.grade = row[2]
+    new_dog
+  end
+
+  def self.find_by_id(id)
+    sql = <<-SQL
+      SELECT *
+      FROM dogs
+      WHERE id = ?
+      LIMIT 1
+    SQL
+    DB[:conn].execute(sql, id).map do |row|
+      self.new_from_db(row)
+    end.first
   end
 
   def update
