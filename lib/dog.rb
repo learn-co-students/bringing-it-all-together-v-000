@@ -1,5 +1,3 @@
-require_relative "../config/environment.rb"
-
 class Dog
   attr_accessor :name, :breed, :id
 
@@ -91,5 +89,5 @@ class Dog
     sql = "UPDATE dogs SET name = ?, breed = ? WHERE id = ?"
     DB[:conn].execute(sql, self.name, self.breed, self.id)
   end
-  
+
 end
