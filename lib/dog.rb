@@ -24,15 +24,39 @@ class Dog
     DB[:conn].execute("DROP TABLE IF EXISTS dogs")
   end
 
-  def self.find_or_create_by(name:, album:)
-     song = DB[:conn].execute("SELECT * FROM songs WHERE name = ? AND album = ?", name, album)
-     if !song.empty?
-       song_data = song[0]
-       song = Song.new(song_data[0], song_data[1], song_data[2])
+  def save
+    sql = "INSERT INTO dogs (name, breed) VALUES (?, ?)"
+    DB[:conn].execute(sql, self.name, self.breed)
+    @id = DB[:conn].execute("SELECT last_insert_rowid() FROM dogs")[0][0]
+    self
+  end
+
+  def self.create(name:, breed:)
+    self.new(name: name, breed: breed)
+    self.save
+  end
+
+  def self.all
+    @@all
+  end
+
+  def self.find_by_id(id)
+    self.all.bsearch{|dog| dog.id == id}
+  end
+
+  def self.find_or_create_by(name:, breed:)
+     dog = DB[:conn].execute("SELECT * FROM dogs WHERE name = ? AND breed = ?", name, breed)
+     if !dog.empty?
+       dog_row = dog[0]
+       dog_new = Dog.new(dog_row[0], dog_row[1], dog_row[2])
      else
-       song = self.create(name: name, album: album)
+       dog_new = self.create(name: name, breed: breed)
      end
-     song
+     dog_new
+   end
+
+   def new_from_db(row)
+     Dog.new(row[0], row[1], row[2])
    end
 
 end
