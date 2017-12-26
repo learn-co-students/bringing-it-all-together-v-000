@@ -32,8 +32,8 @@ class Dog
   end
 
   def self.create(name:, breed:)
-    self.new(name: name, breed: breed)
-    self.save
+    dog = self.new(name: name, breed: breed)
+    dog.save
   end
 
   def self.all
@@ -47,8 +47,7 @@ class Dog
   def self.find_or_create_by(name:, breed:)
      dog = DB[:conn].execute("SELECT * FROM dogs WHERE name = ? AND breed = ?", name, breed)
      if !dog.empty?
-       dog_row = dog[0]
-       dog_new = Dog.new(dog_row[0], dog_row[1], dog_row[2])
+       dog_new = Dog.new_from_db(dog[0])
      else
        dog_new = self.create(name: name, breed: breed)
      end
@@ -56,11 +55,16 @@ class Dog
    end
 
    def self.new_from_db(row)
-     Dog.new(row[0], row[1], row[2])
+     Dog.new(id: row[0], name: row[1], breed: row[2])
    end
 
    def self.find_by_name(name)
      self.all.bsearch{|dog| dog.name == name}
+   end
+
+   def update
+     sql = "UPDATE dogs SET name = ?, breed = ? WHERE id = ?"
+     DB[:conn].execute(sql, self.name, self.breed, self.id)
    end
 
 end
