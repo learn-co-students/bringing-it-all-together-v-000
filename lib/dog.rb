@@ -55,8 +55,12 @@ class Dog
      dog_new
    end
 
-   def new_from_db(row)
+   def self.new_from_db(row)
      Dog.new(row[0], row[1], row[2])
+   end
+
+   def self.find_by_name(name)
+     self.all.bsearch{|dog| dog.name == name}
    end
 
 end
