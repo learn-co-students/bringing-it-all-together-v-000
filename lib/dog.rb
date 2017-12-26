@@ -29,6 +29,9 @@ class Dog
     end
 
     def save
+
+        # binding.pry
+
         if self.id
             self.update
         else
@@ -39,6 +42,9 @@ class Dog
         DB[:conn].execute(sql, self.name, self.breed)
         @id = DB[:conn].execute("SELECT last_insert_rowid() FROM dogs").flatten[0]
         self
+
+        # binding.pry
+
         end
     end
     
@@ -65,10 +71,11 @@ class Dog
       sql = <<-SQL
         SELECT *
         FROM dogs
-        WHERE name = ?
+        WHERE id = ?
         LIMIT 1
       SQL
-    
+      # binding.pry
+
       DB[:conn].execute(sql, id).map do |row|
         self.new_from_db(row)
       end.first
