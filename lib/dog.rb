@@ -65,6 +65,7 @@ class Dog
       grade = row[2]
       new_dog = self.new(id, name, breed)
       new_dog
+      binding.pry
     end  
   
     def self.find_by_id(id)
