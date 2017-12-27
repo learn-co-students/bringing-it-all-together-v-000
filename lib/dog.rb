@@ -55,19 +55,16 @@ class Dog
     end
   
     def update
-      sql = "UPDATE dogs SET name = ?, grade = ? WHERE id = ?"
+      sql = "UPDATE dogs SET name = ?, breed = ? WHERE id = ?"
       DB[:conn].execute(sql, self.name, self.breed, self.id)
     end
   
     def self.new_from_db(row)
-      # binding.pry
-
       id = row[0]
       name = row[1]
       breed = row[2]
-      new_dog = self.new(id, name, breed)
-      # binding.pry
-    end  
+      self.new(id: id, name: name, breed: breed)
+    end
   
     def self.find_by_id(id)
       sql = <<-SQL
@@ -76,18 +73,40 @@ class Dog
         WHERE id = ?
         LIMIT 1
       SQL
-      # binding.pry
-
+  
+      DB[:conn].execute(sql,id).map do |row|
+        self.new_from_db(row)
+      end.first
+    end
+    
+    def self.find_by_id(id)
+      sql = <<-SQL
+        SELECT *
+        FROM dogs
+        WHERE id = ?
+        LIMIT 1
+      SQL
       DB[:conn].execute(sql, id).map do |row|
         self.new_from_db(row)
       end.first
     end  
 
     def self.find_or_create_by(name:, breed:)
-      dog = DB[:conn].execute("SELECT * FROM songs WHERE name = ? AND album = ?", name, breed)
+      dog = DB[:conn].execute("SELECT * FROM dogs WHERE name = '#{name}' AND breed = '#{breed}'")
       if !dog.empty?
         dog_data = dog[0]
-        dog = Dog.new(dog_data[0], dog_data[1], dog_data[2])
+        dog = Dog.new(id: dog_data[0], name: dog_data[1], breed: dog_data[2])
+      else
+        dog = self.create(name: name, breed: breed)
+      end
+      dog
+    end
+    
+    def self.find_or_create_by(name:, breed:)
+      dog = DB[:conn].execute("SELECT * FROM dogs WHERE name = '#{name}' AND breed = '#{breed}'")
+      if !dog.empty?
+        dog_data = dog[0]
+        dog = Dog.new(id: dog_data[0], name: dog_data[1], breed: dog_data[2])
       else
         dog = self.create(name: name, breed: breed)
       end
