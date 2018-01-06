@@ -1,5 +1,3 @@
-require "pry"
-
 class Dog
 
     attr_accessor :name, :breed
@@ -66,6 +64,7 @@ class Dog
         DB[:conn].execute(sql, self.name, self.breed)
         @id = DB[:conn].execute("SELECT last_insert_rowid() FROM dogs")[0][0]
       end
+      self
     end
 
 
@@ -75,12 +74,28 @@ class Dog
       dog
     end
 
-    def self.find_by_id(id:)
-      sql = "SELECT * FROM dogs WHERE id = ?"
-      result = DB[:conn].execute(sql, id)[0]
-      binding.pry
-      Dog.new(result[0], result[1], result[2])
+    def self.find_by_id(id)
+      sql = <<-SQL
+      SELECT * FROM dogs
+      WHERE id = ?
+      LIMIT 1
+      SQL
+
+      DB[:conn].execute(sql, id).map do |row|
+        self.new_from_db(row)
+      end.first
     end
 
+    def self.find_or_create_by(name:, breed:)
+      dog = DB[:conn].execute("SELECT * FROM dogs WHERE name = ? AND breed = ?", name, breed)
+
+      if !dog.empty?
+        dog_data = dog[0]
+        dog = Dog.new(id:dog_data[0], name:dog_data[1], breed:dog_data[2])
+      else
+        dog = self.create(name: name, breed: breed)
+      end
+      dog
+    end
 
 end
