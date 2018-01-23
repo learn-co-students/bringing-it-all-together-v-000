@@ -49,8 +49,10 @@ class Dog
 
   def self.find_by_id(id)
     sql = <<-SQL
-      SELECT * FROM dogs
+      SELECT *
+      FROM dogs
       WHERE id = ?
+      LIMIT 1
     SQL
 
     dog_data = DB[:conn].execute(sql, id)[0]
@@ -60,14 +62,13 @@ class Dog
 
   def self.find_by_name(name)
     sql = <<-SQL
-      SELECT * FROM dogs
+      SELECT *
+      FROM dogs
       WHERE name = ?
       LIMIT 1
     SQL
 
-    dog_data = DB[:conn].execute(sql, name).first
-    dog = self.new(id: dog_data[0], name: dog_data[1], breed: dog_data[2])
-    dog
+    DB[:conn].execute(sql, name).map { |row| self.new_from_db(row) }.first
   end
 
   def self.find_or_create_by(name:, breed:)
@@ -88,10 +89,7 @@ class Dog
   end
 
   def update
-    sql = <<-SQL
-      UPDATE dogs SET name = ?, breed = ? WHERE id = ?
-    SQL
-
+    sql = "UPDATE dogs SET name = ?, breed = ? WHERE id = ?"
     DB[:conn].execute(sql, self.name, self.breed, self.id)
   end
 end
