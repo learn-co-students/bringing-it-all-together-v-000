@@ -7,8 +7,8 @@ attr_accessor :id, :name, :breed
     @breed=breed
   end
 
-  def self.create(name, breed)
-        newdog = Dog.new(name, breed)
+  def self.create(name:, breed:)
+        newdog = Dog.new(name: name, breed: breed)
         newdog.save
         newdog
   end
