@@ -1,4 +1,3 @@
-require 'pry'
 class Dog
 
   attr_accessor :name, :breed
@@ -36,8 +35,8 @@ class Dog
         SQL
       DB[:conn].execute(sql, self.name, self.breed)
       @id = DB[:conn].execute("SELECT last_insert_rowid() FROM dogs")[0][0]
-      self
     end
+    self
   end
 
   def self.new_from_db(row)
@@ -58,6 +57,7 @@ class Dog
   def self.create(name:, breed:)
     dog = Dog.new(name: name, breed: breed)
     dog.save
+    dog
   end
 
   def self.find_by_id(id)
@@ -75,5 +75,4 @@ class Dog
       Dog.create(name: name, breed: breed)
     end
   end
-
 end
