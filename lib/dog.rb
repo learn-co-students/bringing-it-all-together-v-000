@@ -7,4 +7,8 @@ class Dog
         @name = name
         @breed = breed
     end
+
+    def self.create_table
+        puts "I do nothing"
+    end
 end
