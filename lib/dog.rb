@@ -9,6 +9,6 @@ class Dog
     end
 
     def self.create_table
-        puts "I do nothing"
+        # does nothing
     end
 end
