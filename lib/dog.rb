@@ -8,6 +8,33 @@ class Dog
         @breed = breed
     end
 
+    def save
+        if self.id
+            self.update
+        else
+            sql = <<-SQL
+                INSERT INTO dogs (name, breed)
+                VALUES (?, ?)
+            SQL
+
+            DB[:conn].execute(sql, self.name, self.breed)
+
+            @id = DB[:conn].execute('SELECT last_insert_rowid();').first.first
+        end
+        
+        self
+    end
+
+    def update
+        sql = <<-SQL
+            UPDATE dogs
+            SET name = ?, breed = ?
+            WHERE id = ?
+        SQL
+
+        DB[:conn].execute(sql, self.name, self.breed, self.id)
+    end
+
     def self.create_table
         sql = <<-SQL
             CREATE TABLE IF NOT EXISTS dogs (
