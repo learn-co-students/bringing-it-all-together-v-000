@@ -57,8 +57,11 @@ class Dog
       new_from_db(result)
   end
 
-  def self.find_or_create_by
-    # not given any parameters, so what can I use to find it?
+  def self.find_or_create_by(name:, breed:)
+    
+    else
+      create(attributes)
+    end
   end
 
   def self.new_from_db(row)
