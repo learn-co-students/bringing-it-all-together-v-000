@@ -57,8 +57,8 @@ class Dog
       new_from_db(result)
   end
 
-  def self.find_or_create_by(attributes)
-
+  def self.find_or_create_by
+    # not given any parameters, so what can I use to find it?
   end
 
   def self.new_from_db(row)
@@ -83,8 +83,8 @@ class Dog
   end
 
   def update
-    # sql = "UPDATE dogs SET name = ?, breed = ? WHERE id = ?"
-    #   DB[:conn].execute(sql, self.name, self.breed, self.id)
+    sql = "UPDATE dogs SET name = ? WHERE id = ?"
+      DB[:conn].execute(sql, self.name, self.id)
   end
 
 end
