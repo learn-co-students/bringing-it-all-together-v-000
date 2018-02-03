@@ -1,11 +1,9 @@
 class Dog
-  attr_accessor :name, :breed
-  attr_reader :id
+  attr_accessor :name, :breed, :id
 
-  def initialize(id = nil, hash)
-    @id = id
-    @name = hash[:name]
-    @breed = hash[:breed]
+
+  def initialize(attrs)
+    attrs.each { |attr, value| self.send(("#{attr}="), value)}
   end
 
   def self.create_table
@@ -52,17 +50,27 @@ class Dog
         WHERE id = ?
       SQL
 
-      result = DB[:conn].execute(sql, id)[0]
+      result = DB[:conn].execute(sql, id).flatten
 
-      new_from_db(result)
+      Dog.new_from_db(result)
   end
 
-  def self.find_or_create_by(name:, breed:)
-    
+  def self.find_or_create_by(attr_hash)
+    sql = <<-SQL
+      SELECT * FROM dogs
+      WHERE name = ? AND breed = ?
+      SQL
+
+    dog = DB[:conn].execute(sql, attr_hash[:name], attr_hash[:breed]).flatten
+
+    if dog.empty?
+      new_dog = Dog.create(attr_hash)
     else
-      create(attributes)
+      new_dog = Dog.new_from_db(dog)
     end
+    new_dog
   end
+
 
   def self.new_from_db(row)
     hash = {:id => row[0],
@@ -70,7 +78,7 @@ class Dog
       :breed => row[2]
     }
 
-    self.new(hash[:id], hash)
+    Dog.new(hash)
   end
 
   def self.find_by_name(name)
@@ -80,14 +88,14 @@ class Dog
       WHERE name = ?
     SQL
 
-    result = DB[:conn].execute(sql, name)[0]
+    result = DB[:conn].execute(sql, name).flatten
 
-    new_from_db(result)
+    Dog.new_from_db(result)
   end
 
   def update
-    sql = "UPDATE dogs SET name = ? WHERE id = ?"
-      DB[:conn].execute(sql, self.name, self.id)
+    sql = "UPDATE dogs SET name = ?, breed = ? WHERE id = ?"
+      DB[:conn].execute(sql, self.name, self.breed, self.id)
   end
 
 end
