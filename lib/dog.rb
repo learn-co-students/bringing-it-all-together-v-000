@@ -7,20 +7,23 @@ class Dog
     @breed = breed
   end
 
+  def self.table_name
+    "#{self.to_s.downcase}s"
+  end
+
   def self.create_table
     sql = <<-SQL
-      CREATE TABLE IF NOT EXISTS dogs (
+      CREATE TABLE IF NOT EXISTS #{self.table_name} (
         id INTEGER PRIMARY KEY,
         name TEXT,
         breed TEXT
       )
       SQL
-
       DB[:conn].execute(sql)
   end
 
   def self.drop_table
-    sql = "DROP TABLE IF EXISTS dogs"
+    sql = "DROP TABLE IF EXISTS #{self.table_name}"
 
     DB[:conn].execute(sql)
   end
@@ -31,17 +34,17 @@ class Dog
   end
 
   def self.find_by_id(id)
-    sql = "SELECT * FROM dogs WHERE id = ?"
+    sql = "SELECT * FROM #{self.table_name} WHERE id = ?"
 
-    result = DB[:conn].execute(sql, id).flatten
-    self.new(id: result[0], name: result[1], breed: result[2])
+    row = DB[:conn].execute(sql, id).flatten
+    self.reify_from_row(row)
   end
 
   def self.find_or_create_by(name:, breed:)
-    dog = DB[:conn].execute("SELECT * FROM dogs WHERE name = ? AND breed = ?", name, breed)
+    dog = DB[:conn].execute("SELECT * FROM #{self.table_name} WHERE name = ? AND breed = ?", name, breed)
     if !dog.empty?
-      dog_info = dog[0]
-      dog = self.new(id: dog_info[0], name: dog_info[1], breed: dog_info[2])
+      row = dog[0]
+      dog = self.reify_from_row(row)
     else
       dog = self.create(name: name, breed: breed)
     end
@@ -49,14 +52,18 @@ class Dog
   end
 
   def self.new_from_db(row)
-    self.new(id: row[0], name: row[1], breed: row[2])
+    self.reify_from_row(row)
   end
 
   def self.find_by_name(name)
-    sql = "SELECT * FROM dogs WHERE name = ?"
+    sql = "SELECT * FROM #{self.table_name} WHERE name = ?"
 
-    result = DB[:conn].execute(sql, name)[0]
-    self.new(id: result[0], name: result[1], breed: result[2])
+    row = DB[:conn].execute(sql, name)[0]
+    self.reify_from_row(row)
+  end
+
+  def self.reify_from_row(row)
+     self.new(id: row[0], name: row[1], breed: row[2])
   end
 
   def save
@@ -70,17 +77,17 @@ class Dog
 
   def insert
     sql = <<-SQL
-      INSERT INTO dogs (name, breed)
+      INSERT INTO #{self.class.table_name} (name, breed)
       VALUES (?, ?)
       SQL
 
     DB[:conn].execute(sql, self.name, self.breed)
-    self.id = DB[:conn].execute("SELECT last_insert_rowid() from dogs").flatten.first
+    self.id = DB[:conn].execute("SELECT last_insert_rowid() from #{self.class.table_name}").flatten.first
   end
 
   def update
     sql = <<-SQL
-      UPDATE dogs SET name = ?, breed = ? WHERE id = ?
+      UPDATE #{self.class.table_name} SET name = ?, breed = ? WHERE id = ?
       SQL
 
       DB[:conn].execute(sql, self.name, self.breed, self.id)
