@@ -9,10 +9,10 @@ class Dog
     attr_accessor attribute_name
   end
 
-  def initialize(id: nil, name:, breed:)
-    @id = id
-    @name = name
-    @breed = breed
+  def initialize(options={})
+    options.each do |property, value|
+      self.send("#{property}=", value)
+    end
   end
 
   def self.create(hash)
