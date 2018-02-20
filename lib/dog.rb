@@ -51,12 +51,26 @@ class Dog
       WHERE id = ?
     SQL
     
-    vals = DB[:conn].execute(sql, id)
-    
-    vals.flatten!
-    newhash = {name: vals[1], breed: vals[2]}
-    self.create(newhash)
-    # binding.pry
+    vals = DB[:conn].execute(sql, id)[0]
+    # newhash = {id: vals[0], name: vals[1], breed: vals[2]}
+    # dog = self.create(newhash)
+    return Dog.new(id: vals[0], name: vals[1], breed: vals[2])
+    #binding.pry
     # expects an instance of Dog
+  end
+  
+  def self.find_or_create_by(name:, breed:)
+    sql = <<-SQL
+      SELECT * FROM dogs
+      WHERE name = ? AND breed = ?
+    SQL
+    
+    dbvals = DB[:conn].execute(sql, name, breed)
+    
+    if !dbvals.empty?
+      return self.find_by_id(dbvals[0][0])
+    else 
+      return self.create({name: name, breed: breed})
+    end
   end
 end
