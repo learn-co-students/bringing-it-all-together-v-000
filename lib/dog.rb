@@ -44,4 +44,19 @@ class Dog
     dog
     # {:name=>"Ralph", :breed=>"lab"}
   end
+  
+  def self.find_by_id(id)
+    sql = <<-SQL
+      SELECT * FROM dogs 
+      WHERE id = ?
+    SQL
+    
+    vals = DB[:conn].execute(sql, id)
+    
+    vals.flatten!
+    newhash = {name: vals[1], breed: vals[2]}
+    self.create(newhash)
+    # binding.pry
+    # expects an instance of Dog
+  end
 end
