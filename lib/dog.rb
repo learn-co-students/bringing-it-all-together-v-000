@@ -90,7 +90,7 @@ class Dog
       SELECT id, name, breed FROM dogs WHERE name = ? AND breed = ?
     SQL
     dog_specs = DB[:conn].execute(sql, dog_hash[:name], dog_hash[:breed])
-    if dog_specs[0] && dog_specs[0].length > 0
+    if dog_specs[0]
       self.find_by_id(dog_specs[0][0])
     else self.create(dog_hash)
     end
