@@ -23,8 +23,7 @@ class Dog
     DB[:conn].execute('DROP TABLE dogs')
   end
 
-  def self.new_from_db(row)
-    id, name, breed = row
+  def self.new_from_db(id, name, breed)
     new(id: id, name: name, breed: breed)
   end
 
@@ -35,7 +34,7 @@ class Dog
     WHERE name = ?
     SQL
 
-    row = DB[:conn].execute(sql, name)[0]
-    self.new_from_db(row)
+    id, name, breed = DB[:conn].execute(sql, name)[0]
+    self.new_from_db(id, name, breed)
   end
 end
