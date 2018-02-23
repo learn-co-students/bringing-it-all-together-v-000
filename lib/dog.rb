@@ -23,7 +23,8 @@ class Dog
     DB[:conn].execute('DROP TABLE dogs')
   end
 
-  def self.new_from_db(id, name, breed)
+  def self.new_from_db(row)
+    id, name, breed = row
     new(id: id, name: name, breed: breed)
   end
 
@@ -34,8 +35,7 @@ class Dog
     WHERE name = ?
     SQL
 
-    id, name, breed = DB[:conn].execute(sql, name)[0]
-    self.new_from_db(id, name, breed)
+    self.new_from_db(DB[:conn].execute(sql, name)[0])
   end
 
   def save
@@ -50,9 +50,7 @@ class Dog
     SQL
 
     DB[:conn].execute(sql, self.name, self.breed)
-
     @id = DB[:conn].execute('SELECT last_insert_rowid() FROM dogs')[0][0]
-
     self
   end
 
@@ -69,7 +67,10 @@ class Dog
     WHERE id = ?
     SQL
 
-    id, name, breed = DB[:conn].execute(sql, id)[0]
-    new_from_db(id, name, breed)
+    new_from_db(DB[:conn].execute(sql, id)[0])
+  end
+
+  def self.find_or_create_by(h)
+
   end
 end
