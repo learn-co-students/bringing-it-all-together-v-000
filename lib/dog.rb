@@ -38,22 +38,6 @@ class Dog
     self.new_from_db(DB[:conn].execute(sql, name)[0])
   end
 
-  def save
-    if self.id
-      self.update
-      return self
-    end
-
-    sql = <<-SQL
-    INSERT INTO dogs (name, breed)
-    VALUES (?, ?)
-    SQL
-
-    DB[:conn].execute(sql, self.name, self.breed)
-    @id = DB[:conn].execute('SELECT last_insert_rowid() FROM dogs')[0][0]
-    self
-  end
-
   def self.create(h)
     dog = new(h)
     dog.save
@@ -71,6 +55,22 @@ class Dog
   end
 
   def self.find_or_create_by(h)
+    name = h[:name]
+  end
 
+  def save
+    if self.id
+      self.update
+      return self
+    end
+
+    sql = <<-SQL
+    INSERT INTO dogs (name, breed)
+    VALUES (?, ?)
+    SQL
+
+    DB[:conn].execute(sql, self.name, self.breed)
+    @id = DB[:conn].execute('SELECT last_insert_rowid() FROM dogs')[0][0]
+    self
   end
 end
