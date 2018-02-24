@@ -38,8 +38,8 @@ class Dog
     self.new_from_db(DB[:conn].execute(sql, name)[0])
   end
 
-  def self.create(h)
-    dog = new(h)
+  def self.create(hash)
+    dog = new(hash)
     dog.save
     dog
   end
@@ -54,8 +54,10 @@ class Dog
     new_from_db(DB[:conn].execute(sql, id)[0])
   end
 
-  def self.find_or_create_by(h)
-    name = h[:name]
+  def self.find_or_create_by(hash)
+    dog = self.find_by_name(hash[:name])
+
+    dog ? dog : create(hash)
   end
 
   def save
