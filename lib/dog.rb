@@ -57,7 +57,9 @@ class Dog
   def self.find_or_create_by(hash)
     dog = self.find_by_name(hash[:name])
 
-    dog ? dog : create(hash)
+    unless dog.nil?
+      dog.breed == hash[:breed] ? dog : create(hash)
+    end
   end
 
   def save
