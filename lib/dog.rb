@@ -53,14 +53,21 @@ class Dog
     SQL
     DB[:conn].execute(sql, id).collect do |row|
       @dog = self.new_from_db(row)
-      @dog.id = row[0]
     end
     @dog
   end
 
-  # if one exists with same name but different breed
-
-  # if one exists with same breed but different name
+  def self.find_by_name(name)
+    sql = <<-SQL
+      SELECT * FROM dogs
+      WHERE name = ?
+      LIMIT 1
+    SQL
+    DB[:conn].execute(sql, name).collect do |row|
+      @dog = self.new_from_db(row)
+    end
+    @dog
+  end
 
   def self.find_or_create_by(name:, breed:)
     # creates an instance of a dog if it does not already exist
@@ -73,19 +80,6 @@ class Dog
       @dog_instance.id = dog_data[0]
     end
     @dog_instance
-  end
-
-  def self.find_by_name(name)
-    sql = <<-SQL
-      SELECT * FROM dogs
-      WHERE name = ?
-      LIMIT 1
-    SQL
-    DB[:conn].execute(sql, name).collect do |row|
-      @dog = self.new_from_db(row)
-      @dog.id = row[0]
-    end
-    @dog
   end
 
   def update
