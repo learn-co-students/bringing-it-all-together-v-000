@@ -75,9 +75,7 @@ class Dog
       SELECT * FROM dogs WHERE name = ?
     SQL
     result = DB[:conn].execute(sql, name)
-    # binding.pry
     find_or_create_by({name: result[0][1], breed: result[0][2]})
-    # binding.pry
   end
 
   def self.find_or_create_by(attributes)
