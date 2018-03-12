@@ -1,3 +1,5 @@
+
+
 require 'pry'
 class Dog
 
@@ -38,7 +40,7 @@ class Dog
   end
 
 
-   def self.create(name:,breed:)
+   def self.create(name:, breed:)
         dog = Dog.new(name: name, breed: breed)
         dog.save
         dog
@@ -48,17 +50,16 @@ class Dog
     def self.find_by_id(id)
       sql = "SELECT * FROM dogs WHERE id = ?"
       result = DB[:conn].execute(sql,id)[0]
-      binding.pry
       Dog.new(result[0], result[1], result[2])
     end
 
-   def find_or_create_by (name:, breed:)
-      dog = DB [:conn].execute("SELECT * FROM dogs where name = ? AND breed = ?", name, album)
+   def self.find_or_create_by (name:, breed:)
+      dog = DB [:conn].execute("SELECT * FROM dogs WHERE name = '#{name}' AND breed = '#{breed}'")
       if !dog.empty?
         dog_data = dog[0]
-        dog = Dog.new(dog_data[0], dog_data[1], dog_data[2])
+        dog = Dog.new(id:dog_data[0], name:dog_data[1], breed:dog_data[2])
       else
-        song = self.create(name:name, breed: breed)
+        dog = self.create(name:name, breed: breed)
       end
       dog
    end
