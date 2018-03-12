@@ -3,7 +3,7 @@ class Dog
 
   attr_accessor :id, :name, :breed
 
-  def initialize(name:, breed:, id: nil)
+  def initialize(id: nil, name:, breed:)
     @id =id
     @name = name
     @breed = breed
@@ -46,11 +46,11 @@ class Dog
 
 
     def self.find_by_id(id)
-  sql = "SELECT * FROM dogs WHERE id = ?"
-  result = DB[:conn].execute(sql,id)[0]
-  Dog.new(result[0], result[1], result[2])
-  binding.pry
-   end
+      sql = "SELECT * FROM dogs WHERE id = ?"
+      result = DB[:conn].execute(sql,id)[0]
+      binding.pry
+      Dog.new(result[0], result[1], result[2])
+    end
 
    def find_or_create_by (name:, breed:)
       dog = DB [:conn].execute("SELECT * FROM dogs where name = ? AND breed = ?", name, album)
