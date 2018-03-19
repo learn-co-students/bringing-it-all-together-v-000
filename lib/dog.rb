@@ -36,7 +36,7 @@ class Dog
   end
 
   def self.create(name:, breed:)
-
+    DB[:conn].execute("INSERT INTO dogs(name,breed) VALUES (?,?)")
   end
 
 end
