@@ -50,7 +50,19 @@ class Dog
       WHERE name = ?
       LIMIT 1
     SQL
-      DB[:conn].execute(sql, name)
+    row = DB[:conn].execute(sql, name)[0]
+    dog = Dog.new(id: row[0], name: row[1], breed: row[2])
+  end
+
+  def self.find_by_id(id)
+    sql = <<-SQL
+      SELECT *
+      FROM dogs
+      WHERE id = ?
+      LIMIT 1
+    SQL
+    row = DB[:conn].execute(sql, id)[0]
+    dog = Dog.new(id: row[0], name: row[1], breed: row[2])
   end
 
   def update
@@ -65,6 +77,17 @@ class Dog
   def self.create(name:, breed:)
     dog = Dog.new(name: name, breed: breed)
     dog.save
+    dog
+  end
+
+  def self.find_or_create_by(name:, breed:)
+    dog = DB[:conn].execute("SELECT * FROM dogs WHERE name = '#{name}' AND breed = '#{breed}'")
+    if !dog.empty?
+      dog_data = dog[0]
+      dog = Dog.new(id: dog_data[0], name: dog_data[1], breed: dog_data[2])
+    else
+      dog = self.create(name: name, breed: breed)
+    end
     dog
   end
 
