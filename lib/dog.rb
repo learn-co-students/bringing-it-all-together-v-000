@@ -65,7 +65,7 @@ class Dog
 
   def save
     if self.id
-      self.class.find_by_id(self.id)
+      self.update 
     else
       self.insert
     end
