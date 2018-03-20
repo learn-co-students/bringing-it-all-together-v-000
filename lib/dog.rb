@@ -65,7 +65,7 @@ class Dog
 
   def save
     if self.id
-      self.update 
+      self.update
     else
       self.insert
     end
@@ -77,9 +77,11 @@ class Dog
     dog
   end
 
-  def self.find_or_create_by(hash)
-    dog = self.find_by_name(hash[:name])
-    if dog.id && dog.breed == hash[:breed]
+  def self.find_or_create_by(name:, breed:)
+    sql = "SELECT * FROM dogs WHERE name = ? AND breed = ?"
+    dog = DB[:conn].execute(sql, name, breed)
+    binding.pry
+    if !dog.empty
       self.find_by_id(self.find_by_name(hash[:name]).id)
     else
       self.create(hash)
