@@ -1,10 +1,8 @@
 class Dog
   attr_accessor :id, :name, :breed
   
-  def initialize(id=nil, name, breed)
-    @id = id
-    @name = name
-    @breed = breed
+  def initialize(attributes)
+    attributes.each {|key, value| self.send(("#{key}="),value)}
   end
   
   def self.create_table
@@ -24,31 +22,51 @@ class Dog
     DB[:conn].execute(sql)
   end
   
-  def self.new_from_db(row)
-    Dogs.new(row[0], row[1], row[2])
-  end
-  
-  def self.find_by_name(name)
-    sql = "SELECT * FROM dogs WHERE name = ?"
-    DB[:conn].execute(sql, name)
-  end
-  
   def update
     sql = "UPDATE dogs SET name = ?, breed = ? WHERE id = ?"
     DB[:conn].execute(sql, self.name, self.breed, self.id)
   end
   
   def save 
-    dog = Dog.find_by_name(self.name)
-    if dog.empty?
+    # if self.id
       sql = <<-SQL
       INSERT INTO dogs(name, breed)
       VALUES (?, ?)
       SQL
       DB[:conn].execute(sql, self.name, self.breed)
-      @id = DB[:conn].execute("SELECT last_insert_rowid() FROM dogs").first.first
+      self.id = DB[:conn].execute("SELECT last_insert_rowid() FROM dogs").first.first
+      self
+    # else
+    #   self.update
+    # end
+  end
+  
+  def self.create(attributes)
+    Dog.new(attributes).tap{|dog| dog.save}
+  end
+  
+  def self.find_by_id(id)
+    sql = "SELECT * FROM dogs WHERE id = ?"
+    dog = DB[:conn].execute(sql, id).first
+    Dog.new_from_db(dog)
+  end
+  
+  def self.find_or_create_by(name:, breed:)
+    dog = DB[:conn].execute("SELECT * FROM dogs WHERE name = ? AND breed = ?", name, breed)
+    if dog.empty?
+      Dog.create(name: name, breed: breed)
     else
-      self.update
+      Dog.new_from_db(dog.first)
     end
   end
+  
+  def self.new_from_db(row)
+    Dog.new(id: row[0], name: row[1], breed: row[2])
+  end
+  
+  def self.find_by_name(name)
+    sql = "SELECT * FROM dogs WHERE name = ?"
+    Dog.new_from_db(DB[:conn].execute(sql, name).first)
+  end
+  
 end
