@@ -83,7 +83,7 @@ describe "Dog" do
 
   describe '::find_by_id' do
     it 'returns a new dog object by id' do
-      dog = Dog.create(name: "Kevin", breed: "shepard")
+      dog = Dog.create(name: "Kevin", breed: "shepard") #here, we see that we need the .create method, which also depends on the .save method, which then creates an id for our instance"
 
       dog_from_db = Dog.find_by_id(1)
 
