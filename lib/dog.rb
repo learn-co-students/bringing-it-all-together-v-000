@@ -68,6 +68,7 @@ class Dog
           SELECT * FROM dogs WHERE name = ?
         SQL
 
-          DB[:conn].execute(sql, name)
+        row =  DB[:conn].execute(sql, name).flatten
+        new_from_db(row)
       end
 end
