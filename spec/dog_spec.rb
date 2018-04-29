@@ -1,7 +1,7 @@
 require "spec_helper"
 require 'pry'
 
-describe "Dog" do
+puts describe "Dog" do
 
   let(:teddy) {Dog.new(name: "Teddy", breed: "cockapoo")}
 
@@ -17,7 +17,7 @@ describe "Dog" do
     DB[:conn].execute(sql)
   end
 
-  describe "attributes" do
+puts  describe "attributes" do
     it 'has a name and a breed' do
       dog = Dog.new(name: "Fido", breed: "lab")
       expect(dog.name).to eq("Fido")
