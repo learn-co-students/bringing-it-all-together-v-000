@@ -3,7 +3,9 @@ class Dog
   attr_accessor :name, :breed, :id
 
   def initialize(params)
-    params.each {|k, v| self.send("#{k}=", v)}
+    @id = params[:id]
+    @name = params[:name]
+    @breed = params[:breed]
   end
 
   def self.create_table
@@ -48,7 +50,19 @@ class Dog
   end
 
   def self.find_or_create_by(attributes)
-    binding.pry
+    sql = <<-SQL
+      SELECT * FROM dogs
+      WHERE name = ?
+      AND breed = ?
+      SQL
+
+    dog = DB[:conn].execute(sql, attributes[:name], attributes[:breed])
+    if !dog.empty?
+      dog_data = dog[0]
+      new_from_db(dog_data)
+    else
+      dog = self.create(attributes)
+    end
   end
 
   def self.new_from_db(row)
@@ -65,10 +79,13 @@ class Dog
       SELECT * FROM dogs
       WHERE name = ?
       SQL
-
-    if sql != nil
-      new_from_db(DB[:conn].execute(sql.first))
-    end
+      dog = (DB[:conn].execute(sql, name))
+      new_from_db(dog[0])
   end
+
+  def update
+   sql = "UPDATE dogs SET name = ?, breed = ? WHERE id = ?"
+   DB[:conn].execute(sql, self.name, self.breed, self.id)
+ end
 
 end
