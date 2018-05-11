@@ -50,10 +50,25 @@ class Dog
       LIMIT 1
     SQL
 
-    DB[:conn].execute(sql,id)
-    # .map do |dog|
-    #   self.new_from_db(dog)
-    # end.first
+  dog =   DB[:conn].execute(sql,id)[0]
+
+  id = dog[0]
+  name = dog[1]
+  breed = dog[2]
+
+  dog_hash = {:name => name, :breed => breed}
+
+  new_dog = Dog.new(dog_hash, id)
+  end
+
+  def self.find_or_create_by(name:, breed:)
+    dog = DB[:conn].execute("SELECT * FROM dogs WHERE name = ? AND breed = ?", name, breed)
+
+    if !song.empty?
+      dog_data = dog[0]
+
+
+
   end
 
 
