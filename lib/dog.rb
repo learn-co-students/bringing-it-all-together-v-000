@@ -36,13 +36,25 @@ class Dog
   end
 
   def self.create(dog_hash)
-    name = dog_hash[:name]
-    breed = dog_hash[:breed]
-    dog = self.new(dog_hash[:name], dog_hash[:breed])
-
-
+    dog = self.new(dog_hash)
+    dog.save
   end
 
+
+
+  def self.find_by_id(id)
+    sql = <<-SQL
+      SELECT *
+      FROM dogs
+      WHERE id = ?
+      LIMIT 1
+    SQL
+
+    DB[:conn].execute(sql,id)
+    # .map do |dog|
+    #   self.new_from_db(dog)
+    # end.first
+  end
 
 
 end
