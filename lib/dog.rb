@@ -64,14 +64,24 @@ end
     return_from_db = DB[:conn].execute(query, name, breed)
     
     if return_from_db[0]
-      dog = self.new_from_db(return_from_db.flatten)
+      dog = self.find_by_id(return_from_db.flatten[0])
     else 
-      dog = self.find_by_id(return_from_db[0])
-      binding.pry
+      dog = self.new(name: name, breed: breed)
+      dog.save
     end
     dog
   end
     
-    
+ def self.find_by_name(name)
+   query = "SELECT * FROM dogs WHERE name = ? LIMIT 1"
+   DB[:conn].execute(query, name).map do |row|
+      self.new_from_db(row)
+    end.first 
+  end 
+  
+  def update
+    sql = "UPDATE dogs SET name = ? WHERE id = ?"
+    DB[:conn].execute(sql, self.name, self.id)
+  end 
   
 end 
