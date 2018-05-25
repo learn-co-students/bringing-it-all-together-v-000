@@ -36,7 +36,8 @@ class Dog
 
   def save
   # returns an instance of the dog class
-  # saves an instance of the dog class to the database and then sets the given dogs `id` attribute
+  # saves an instance of the dog class to the database and 
+  # then sets the given dogs `id` attribute
     if self.id
       self.update
     else
@@ -51,7 +52,8 @@ class Dog
   end
 
   def self.create(name:, breed:)
-  # takes in a hash of attributes and uses metaprogramming to create a new dog object. Then it uses the #save method to save that dog to the database
+  # takes in a hash of attributes and uses metaprogramming to create a new dog object.
+  # Then it uses the #save method to save that dog to the database
   # returns a new dog object
     dog = Dog.new(name: name, breed: breed)
     dog.save
