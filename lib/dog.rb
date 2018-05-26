@@ -1,7 +1,10 @@
+require 'pry'
+
 class Dog
-  attr_accessor :name, :breed, :id
+  attr_accessor :name, :breed
+  attr_reader :id
   
-  def initialize(id: nil, name: , breed:)
+  def initialize(id: nil, name:, breed:)
     @id = id
     @name = name
     @breed = breed
@@ -18,13 +21,24 @@ class Dog
     end.first
   end
   
+  def self.find_or_create_by(name:, breed:)
+    dog = DB[:conn].execute("SELECT * FROM dogs WHERE name = ? AND breed = ?", name, breed)
+    if !dog.empty?
+      dog_data = dog[0]
+      dog = Dog.new_from_db(dog_data)
+    else
+      dog = self.create(name: name, breed: breed)
+    end
+    dog
+  end
+  
   def update
     sql = <<-SQL
       UPDATE dogs 
       SET name = ?, breed = ? 
       WHERE id = ?
       SQL
-    update = DB[:conn].execute(sql, self.name, self.grade, self.id)
+    update = DB[:conn].execute(sql, self.name, self.breed, self.id)
     update
   end
   
@@ -43,7 +57,7 @@ class Dog
     id = row[0]
     name = row[1]
     breed = row[2]
-    self.new(id, name, breed)
+    self.new(id: id, name: name, breed: breed)
   end
   
   def save
