@@ -1,4 +1,5 @@
 require_relative "../config/environment.rb"
+require 'pry'
 
 class Dog
 
@@ -66,6 +67,23 @@ class Dog
 
       @id = DB[:conn].execute("SELECT last_insert_rowid() FROM dogs")[0][0]
     end
+    self
+  end
 
+  def self.create(name:, breed:)
+    # dog = Dog.new(name, breed) # wrong number of arguments (given 2, expected 0)
+    # dog = Dog.new # missing keywords: name, breed
+    # dog = Dog.new(name, breed) # wrong number of arguments (given 2, expected 0)
+    # dog = Dog.new(name:, breed:) #unexpected ',' (SyntaxError) dog = Dog.new(name:, breed:) # wrong number of ar...
+    dog = Dog.new(name:, breed:) # wrong number of ar...
+    binding.pry
+    # dog.name = name
+    # dog.breed = breed
+    # dog.name = @name # missing keywords: name, breed
+    # dog.breed = @breed
+    # dog.name = name:
+    # dog.breed = breed: #syntax error, unexpected ':', expecting keyword_end
+    dog.save
+    dog
   end
 end
