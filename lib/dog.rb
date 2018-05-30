@@ -75,4 +75,8 @@ class Dog
     dog = Dog.new(hash)
     dog.save
   end
+
+  def self.find_by_id(id)
+    dog_from_db = DB[:conn].execute("select * from dogs where id = id")
+  end
 end
