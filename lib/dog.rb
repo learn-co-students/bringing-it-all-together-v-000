@@ -1,5 +1,4 @@
 require_relative "../config/environment.rb"
-require 'pry'
 
 class Dog
 
@@ -26,13 +25,6 @@ class Dog
     sql = "DROP TABLE IF EXISTS dogs"
     DB[:conn].execute(sql)
   end
-
-  # def self.new_from_db(row)
-  #   id = row[0]
-  #   name = row[1]
-  #   breed = row[2]
-  #   self.new(id, name, breed)
-  # end
 
   def self.find_by_name(name)
     # find the student in the database given a name
@@ -86,7 +78,6 @@ class Dog
       if !dog_row.empty?
         dog_data = dog_row[0]
         dog = Dog.new(id: dog_data[0], name: dog_data[1], breed: dog_data[2])
-        # binding.pry
       else
         dog = self.create(name: name, breed: breed)
         dog.save
