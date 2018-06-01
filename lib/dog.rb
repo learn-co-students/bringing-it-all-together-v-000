@@ -2,13 +2,11 @@ require "pry"
 class Dog
   attr_accessor :id, :name, :breed
 
-  def initialize(attributes)
-    attributes.each do |key, value|
-      self.send("#{key}=", value)
-    end
-    #binding.pry
+  def initialize(id: nil, name:, breed:)
+    @id = id
+    @name = name
+    @breed = breed
   end
-  #binding.pry
 
   def self.create_table
     sql = <<-SQL
@@ -40,14 +38,14 @@ class Dog
       SQL
 
       DB[:conn].execute(sql, self.name, self.breed)
-      result = DB[:conn].execute("SELECT * FROM dogs").first
-      self.id = result[0]
+      result = DB[:conn].execute("SELECT last_insert_rowid() FROM dogs").first
+      @id = result[0]
       self
     end
   end
 
-  def self.create(attributes)
-    dog = self.new(attributes)
+  def self.create(name:, breed:)
+    dog = self.new(name: name, breed: breed)
     dog.save
     dog
   end
@@ -78,15 +76,13 @@ class Dog
     dog = self.new({id: row[0], name: row[1], breed: row[2]})
   end
 
-  def self.find_or_create_by(attributes)
-    #binding.pry
-    dog = DB[:conn].execute("SELECT * FROM dogs WHERE name = ? AND breed = ?", attributes[:name], attributes[:breed])
+  def self.find_or_create_by(name:, breed:)
+    dog = DB[:conn].execute("SELECT * FROM dogs WHERE name = ? AND breed = ?", name, breed)
     if !dog.empty?
       dog1 = dog[0]
       dog = self.new_from_db([dog1[0], dog1[1], dog1[2]])
-      #binding.pry
     else
-      dog = self.create(attributes)
+      dog = self.create(name: name, breed: breed)
     end
     dog
   end
