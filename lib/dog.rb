@@ -78,15 +78,15 @@ class Dog
       WHERE name = ?
     SQL
 
-    result = DB[:conn].execute(sql, name)
-    binding.pry
+    result = DB[:conn].execute(sql, name)[0]
+    id = result[0]
+    self.find_by_id(id)
   end
 
-  #
-  # def update
-  #   sql = "UPDATE dogs SET name = ?, breed = ? WHERE id = ?"
-  #   DB[:conn].execute(sql, self.name, self.breed, self.id)
-  # end
-  #
+  def update
+    sql = "UPDATE dogs SET name = ?, breed = ? WHERE id = ?"
+    DB[:conn].execute(sql, self.name, self.breed, self.id)
+  end
+
 
 end
