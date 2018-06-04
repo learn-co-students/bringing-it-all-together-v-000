@@ -84,7 +84,10 @@ def self.find_by_id(id)
         end.first
     end
 
-def self.find_or_create_by
+def self.find_or_create_by(name:, breed:)
+  if !self.id
+    self.create
+  end
 end
 
 end
