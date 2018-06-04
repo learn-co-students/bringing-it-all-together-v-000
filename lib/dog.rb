@@ -85,9 +85,20 @@ def self.find_by_id(id)
     end
 
 def self.find_or_create_by(name:, breed:)
-  if !self.id
-    self.create
-  end
+  sql = <<-SQL
+      SELECT *
+      FROM dogs
+      WHERE name = ? AND breed = ?
+      LIMIT 1
+    SQL
+    dog_info = DB[:conn].execute(sql, name, breed).map do |row|
+     self.new_from_db(row)
+    end.first
+    if dog_info
+      dog_info
+    else
+      self.create(name: name, breed: breed)
+    end
 end
 
 end
