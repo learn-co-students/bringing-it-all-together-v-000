@@ -47,7 +47,7 @@ class Dog
     dog
   end
 
-  def self.find_or_create_by(dog_hash)
+  def self.find_or_create_by(dog_hash) #struggled with this, thought it was passing in arguments, but it was a single hash!
     sql="SELECT * FROM dogs WHERE name=? AND breed=?"
     data=DB[:conn].execute(sql,dog_hash[:name],dog_hash[:breed])
     if !data.empty?
