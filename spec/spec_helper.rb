@@ -1,5 +1,5 @@
 require_relative '../config/environment'
-DB[:conn] = SQLite3::Database.new ":memory:"
+DB[:conn] = SQLite3::Database.new ":memory:" #points to a new in-memory database for testing.
 
 RSpec.configure do |config|
   # Use color not only in STDOUT but also in pagers and files
