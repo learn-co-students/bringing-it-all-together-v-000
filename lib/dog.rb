@@ -25,16 +25,20 @@ class Dog
   end
 
   def save
-    sql = <<-SQL
-      INSERT INTO dogs (name, breed)
-      VALUES (?, ?)
-    SQL
+    if self.id
+      self.update
+    else
+      sql = <<-SQL
+        INSERT INTO dogs (name, breed)
+        VALUES ('#{self.name}', '#{self.breed}')
+      SQL
 
-    DB[:conn].execute(sql, self.name, self.breed)
+      DB[:conn].execute(sql)
 
-    @id = DB[:conn].execute("SELECT last_insert_rowid() FROM dogs")[0][0]
+      @id = DB[:conn].execute("SELECT last_insert_rowid() FROM dogs")[0][0]
 
-    self
+      self
+    end
   end
 
   def self.create(attr)
@@ -44,17 +48,17 @@ class Dog
 
   def self.find_by_id(id)
     sql = <<-SQL
-      SELECT * FROM dogs
-      WHERE id = ?
+      SELECT *
+      FROM dogs
+      WHERE id = #{id}
     SQL
 
-    dog = DB[:conn].execute(sql, id)[0]
-
-    self.new(id: dog[0], name: dog[1], breed: dog[2])
+    dog = DB[:conn].execute(sql)[0]
+    self.new_from_db(dog)
   end
 
   def self.find_or_create_by(attr)
-    dog = DB[:conn].execute("SELECT * FROM dogs WHERE name = ? AND breed = ?", attr[:name], attr[:breed])
+    dog = DB[:conn].execute("SELECT * FROM dogs WHERE name = '#{attr[:name]}' AND breed = '#{attr[:breed]}'")
 
     if !dog.empty?
       dog_data = dog[0]
@@ -70,7 +74,8 @@ class Dog
 
   def self.find_by_name(name)
     sql = <<-SQL
-      SELECT * FROM dogs
+      SELECT *
+      FROM dogs
       WHERE name = ?
     SQL
 
@@ -82,11 +87,11 @@ class Dog
   def update
     sql = <<-SQL
       UPDATE dogs
-      SET name = ?, breed = ?
-      WHERE ID = ?
+      SET name = '#{self.name}', breed = '#{self.breed}'
+      WHERE ID = '#{self.id}'
     SQL
 
-    DB[:conn].execute(sql, self.name, self.breed, self.id)
+    DB[:conn].execute(sql)
   end
 
 end
