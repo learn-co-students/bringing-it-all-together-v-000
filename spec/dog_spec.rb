@@ -151,4 +151,12 @@ describe "Dog" do
 
   end
 
+  def find_by_name(name)
+    sql = <<-SQL
+    SELECT * FROM dogs WHERE name = ?;
+    SQL
+    result = DB[:conn].execute(sql, name)[0]
+    Dog.new(id: result[0], name: result[1], breed: result[2])
+  end
+
 end
