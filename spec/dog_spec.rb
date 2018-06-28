@@ -6,6 +6,7 @@ describe "Dog" do
   let(:teddy) {Dog.new(name: "Teddy", breed: "cockapoo")}
 
   before(:each) do
+    Dog.clear_all
     DB[:conn].execute("DROP TABLE IF EXISTS dogs")
     sql =  <<-SQL
       CREATE TABLE IF NOT EXISTS dogs (
