@@ -79,11 +79,7 @@ class Dog
   end 
   
   def self.create(hash)
-    self.new(hash).tap do |dog|
-      hash.each do |k,v|
-        dog.send("#{k}=", v)
-      end
-    end.save
+   self.new(hash).save
   end 
   
   def self.find_by_id(id)
