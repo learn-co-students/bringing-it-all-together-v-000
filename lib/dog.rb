@@ -53,20 +53,49 @@ class Dog
   end
 
   def self.find_or_create_by(hash)
-    sql = "SELECT * FROM dogs WHERE name = ?"
-    find = DB[:conn].execute(sql, hash[:name]
+    dog_hash = {}
+    sql = "SELECT * FROM dogs WHERE name = ? AND breed = ?"
+    find = DB[:conn].execute(sql, hash[:name], hash[:breed])
     if !find.empty?
-      binding.pry
-
       found_dog = find[0]
-      binding.pry
-      new_dog = self.new
+      dog_hash[:name] = found_dog[1]
+      dog_hash[:breed] = found_dog[2]
+      dog_hash[:id] = found_dog[0]
+      new_dog = self.new(dog_hash, dog_hash[:id])
+
+    else
+
+      dog_hash[:name] = hash[:name]
+      dog_hash[:breed] = hash[:breed]
+      new_dog = self.create(dog_hash)
     end
-
-
+    new_dog
   end
 
+  def self.new_from_db(db)
+    dog_hash = {}
+    dog_hash[:name] = db[1]
+    dog_hash[:breed] = db[2]
+    db_dog = self.new(dog_hash)
+    db_dog.id = db[0]
+    db_dog
+  end
 
+  def self.find_by_name(db)
+    dog_hash = {}
+    sql = "SELECT * FROM dogs WHERE name = ?"
+    found_dog = DB[:conn].execute(sql, db)
+    dog_hash[:name] = found_dog[0][1]
+    dog_hash[:breed] = found_dog[0][2]
+    new_dog = self.new(dog_hash)
+    new_dog.id = found_dog[0][0]
+    new_dog
+  end
 
+  def update
+    sql = "UPDATE dogs SET name = ?, breed = ? WHERE id = ?"
+    DB[:conn].execute(sql, self.name, self.breed, self.id)
+
+  end
 
 end
