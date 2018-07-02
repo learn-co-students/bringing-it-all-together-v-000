@@ -77,8 +77,26 @@ class Dog
     new(id: row[0], name: row[1], breed: row[2])
   end
   
-  def self.find_by_name
+  def self.find_by_name(dogs_name)
+    sql = <<-SQL
+      SELECT *
+      FROM dogs
+      WHERE name = ?
+    SQL
     
+    DB[:conn].execute(sql, dogs_name).map do |row|
+      self.new_from_db(row)
+    end.first
+  end
+  
+  def update
+    sql = <<-SQL
+      UPDATE dogs 
+      SET name = ?, breed = ? 
+      WHERE id = ?
+    SQL
+
+    DB[:conn].execute(sql, self.name, self.breed, self.id)
   end
   
 end
