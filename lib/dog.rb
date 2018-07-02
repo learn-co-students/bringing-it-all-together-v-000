@@ -54,6 +54,7 @@ class Dog
       SELECT *
       FROM dogs
       WHERE id = ?
+      LIMIT 1
     SQL
     
     DB[:conn].execute(sql, dogs_id).map do |row|
@@ -62,13 +63,7 @@ class Dog
   end
   
   def self.find_or_create_by(name: name, breed: breed)
-    sql = <<-SQL
-      SELECT *
-      FROM dogs
-      WHERE name = ? AND breed = ?
-    SQL
-    
-    dog_found = DB[:conn].execute(sql, name, breed)
+    dog_found = DB[:conn].execute("SELECT * FROM dogs WHERE name = '#{name}' AND breed = '#{breed}'")
     
     unless dog_found.empty?
       find_by_id(dog_found[0][0])
@@ -78,7 +73,10 @@ class Dog
   end
   
   def self.new_from_db(row)
-    new(id: row[0], name: row[1], breed: row[2])
+    id = row[0]
+    name = row[1]
+    breed = row[2]
+    new(id: id, name: name, breed: breed)
   end
   
   def self.find_by_name(dogs_name)
@@ -86,6 +84,7 @@ class Dog
       SELECT *
       FROM dogs
       WHERE name = ?
+      LIMIT 1
     SQL
     
     DB[:conn].execute(sql, dogs_name).map do |row|
