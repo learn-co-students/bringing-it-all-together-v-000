@@ -2,10 +2,10 @@ class Dog
 
   attr_accessor :id, :name, :breed
 
-  def initialize(dog_info)
-    @id = dog_info[:id]
-    @name = dog_info[:name]
-    @breed = dog_info[:breed]
+  def initialize(name: , breed: , id:nil)
+    @id = id
+    @name = name
+    @breed = breed
   end
 
   def self.create_table
@@ -23,8 +23,8 @@ class Dog
     DB[:conn].execute('DROP TABLE IF EXISTS dogs')
   end
 
-  def self.create(name:, breed:)
-    new_dog = self.new(name, breed)
+  def self.create(name: name, breed: breed)
+    new_dog = self.new(name: name, breed: breed)
     new_dog.save
     new_dog
   end
@@ -45,7 +45,12 @@ class Dog
   end
 
   def self.new_from_db(row)
-    self.new(row[1], row[2], row[0])
+    self.new(name: row[1], breed: row[2], id: row[0])
+  end
+
+  def self.find_by_id(id)
+    dog_data = DB[:conn].execute("SELECT * FROM dogs WHERE id = ?", id)[0]
+    self.new_from_db(dog_data)
   end
 
   def self.find_by_name(name)
@@ -56,6 +61,16 @@ class Dog
   def update
     sql = "UPDATE dogs SET name = ?, breed = ? WHERE id = ?"
     DB[:conn].execute(sql, self.name, self.breed, self.id)
+  end
+
+  def self.find_or_create_by(name: name, breed: breed)
+    dog_data = DB[:conn].execute('SELECT * FROM dogs WHERE name = ? AND breed = ?', name, breed)
+    if !dog_data.empty?
+      new_dog = self.new_from_db(dog_data[0])
+    else
+      new_dog = self.create(name: name, breed: breed)
+    end
+    new_dog
   end
 
 end
