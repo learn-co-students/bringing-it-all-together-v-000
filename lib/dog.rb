@@ -65,12 +65,11 @@ class Dog
 
     results = DB[:conn].execute(sql, name, breed)
     if !results.empty?
-      dog_from_db = Dog.new(name: results[0][1], breed: results[0][2], id: results[0][0])
-      dog_from_db
+      dog = Dog.new(name: results[0][1], breed: results[0][2], id: results[0][0])
     else
-      newly_created_dog = Dog.create(name: name, breed: breed)
-      newly_created_dog
+      dog = Dog.create(name: name, breed: breed)
     end
+    dog
   end
 
   def self.create(hash)
