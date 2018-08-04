@@ -50,9 +50,9 @@ class Dog
       WHERE id = ?
     SQL
 
-    dog_found = DB[:conn].execute(sql, id).first
-    dog_instance = Dog.new(name: dog_found[1], breed: dog_found[2], id:dog_found[0])
-
+    DB[:conn].execute(sql, id).map do |row|
+      self.new_from_db(row)
+    end.first
   end
 
   def self.find_or_create_by(name:, breed:,id: nil)
