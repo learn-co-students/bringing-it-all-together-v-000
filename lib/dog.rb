@@ -5,7 +5,7 @@ class Dog
 
   attr_accessor :name, :breed, :id
 
-  def initialize(name:, breed:, id: nil)
+  def initialize(id: nil, name:, breed:)
     @name = name
     @breed = breed
     @id = id
@@ -45,8 +45,13 @@ class Dog
     dog.save
   end
 
-  def self.find_by_id
-
+  def self.find_by_id(id)
+    sql = <<-SQL
+      SELECT * FROM dogs WHERE id=?
+      LIMIT 1
+    SQL
+    row = DB[:conn].execute(sql, id)
+    Dog.new(row[0][0], row[0][1], row[0],[2])
   end
 
 end
