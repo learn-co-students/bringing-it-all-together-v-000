@@ -47,11 +47,25 @@ class Dog
 
   def self.find_by_id(id)
     sql = <<-SQL
-      SELECT * FROM dogs WHERE id=?
+      SELECT *
+      FROM dogs
+      WHERE id=?
       LIMIT 1
     SQL
-    row = DB[:conn].execute(sql, id)
-    Dog.new(row[0][0], row[0][1], row[0],[2])
+    DB[:conn].execute(sql, id).map do |row|
+      self.new_from_row(row)
+    end.first
+  end
+
+  def self.new_from_row(row)
+    id = row[0]
+    name = row[1]
+    breed = row[2]
+    self.new(id: id, name: name, breed: breed)
+  end
+
+  def self.find_or_create_by(name:, breed:)
+
   end
 
 end
