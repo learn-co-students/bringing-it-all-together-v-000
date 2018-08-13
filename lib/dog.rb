@@ -5,10 +5,14 @@ class Dog
   attr_accessor :name, :breed
   attr_reader :id
 
-  def initialize(id: nil, name:, breed:)
-    @id = id
-    @name = name
-    @breed = breed
+  @@all = []
+
+  def initialize(args={name: nil, breed: nil})
+    @id = nil
+    @name = args[:name]
+    @breed = args[:breed]
+
+    @@all << self
   end
 
   def self.create_table
@@ -47,22 +51,32 @@ class Dog
     dog
   end
 
-  def self.find_by_id(id)
-    self.create(name:, breed:)
-    sql = "SELECT * FROM dogs WHERE id = ?"
+  def self.new_from_db(row)
+    id = row[0]
+    name = row[1]
+    breed = row[2]
+    self.new(id, name, breed)
   end
 
-  # def self.find_by_id(id:)
-  #   sql = <<-SQL
-  #   SELECT *
-  #   FROM dogs
-  #   WHERE id = ?
-  #   LIMIT 1
-  #   SQL
-  #
-  #   DB[:conn].execute(sql, id).map do |row|
-  #     self.new_from_db(row)
-  #   end.first
+  def self.find_by_name(name)
+    sql = <<-SQL
+    SELECT *
+    FROM dogs
+    WHERE name = ?
+    LIMIT 1
+    SQL
+
+    DB[:conn].execute(sql, name).map do |row|
+      self.new_from_db(row)
+    end.first
+  end
+
+
+  # def self.find_by_id(id)
+  #   sql = "SELECT * FROM dogs WHERE id = ?"
+  #   # binding.pry
+  #   dog = DB[:conn].execute(sql, id)[0]
   # end
+
 
 end
