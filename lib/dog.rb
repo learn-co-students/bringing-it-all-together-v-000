@@ -42,7 +42,7 @@ class Dog
     dog.save
     dog
   end
-  def self.new_from_bd(row)
+  def self.new_from_db(row)
     dog = self.new(row[0],row[1],row[2])
   end 
     
