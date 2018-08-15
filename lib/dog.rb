@@ -7,10 +7,10 @@ class Dog
 
   @@all = []
 
-  def initialize(args={name: nil, breed: nil})
-    @id = nil
-    @name = args[:name]
-    @breed = args[:breed]
+  def initialize(id: nil, name:, breed:)
+    @id = id
+    @name = name
+    @breed = breed
 
     @@all << self
   end
@@ -34,14 +34,18 @@ class Dog
   end
 
   def save
-    sql = <<-SQL
-    INSERT INTO dogs (name, breed)
-    VALUES (?, ?)
-    SQL
+    if self.id
+      self.update
+    else
+      sql = <<-SQL
+      INSERT INTO dogs (name, breed)
+      VALUES (?, ?)
+      SQL
 
-    DB[:conn].execute(sql, self.name, self.breed)
+      DB[:conn].execute(sql, self.name, self.breed)
 
-    @id = DB[:conn].execute("SELECT last_insert_rowid() FROM dogs")[0][0]
+      @id = DB[:conn].execute("SELECT last_insert_rowid() FROM dogs")[0][0]
+    end
     self
   end
 
@@ -55,7 +59,26 @@ class Dog
     id = row[0]
     name = row[1]
     breed = row[2]
-    self.new(id, name, breed)
+    self.new(id: id, name: name, breed: breed)
+  end
+
+  def update
+    sql = "UPDATE dogs SET name = ?, breed = ? WHERE id = ?"
+
+    DB[:conn].execute(sql, self.name, self.breed, self.id)
+  end
+
+  def self.find_or_create_by(name:, breed:)
+    dog = DB[:conn].execute("SELECT * FROM dogs WHERE name = ? AND breed = ?", name, breed)
+
+    if !dog.empty?
+      # binding.pry
+      new_dog = dog[0]
+      dog = Dog.new(id: new_dog[0], name: new_dog[1], breed: new_dog[2])
+    else
+      dog = self.create(name: name, breed: breed)
+    end
+    dog
   end
 
   def self.find_by_name(name)
@@ -72,11 +95,12 @@ class Dog
   end
 
 
-  # def self.find_by_id(id)
-  #   sql = "SELECT * FROM dogs WHERE id = ?"
-  #   # binding.pry
-  #   dog = DB[:conn].execute(sql, id)[0]
-  # end
+  def self.find_by_id(id)
+    sql = "SELECT * FROM dogs WHERE id = ?"
+    # binding.pry
+    rows = DB[:conn].execute(sql, id)
+    self.new_from_db(rows.first)
+  end
 
 
 end
