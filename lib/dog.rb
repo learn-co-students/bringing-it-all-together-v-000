@@ -86,23 +86,7 @@ def self.find_by_id(id)
   Dog.new(id:new_dog[0], name:new_dog[1], breed:new_dog[2])
 end
 
-#
-# def self.find_or_create_by(name:, breed:)
-#   sql = <<-SQL
-#   SELECT *
-#   FROM dogs
-#   WHERE name = ?, breed = ?
-#   SQL
-#
-#   dog = DB[:conn].execute(sql, name, breed).first
-#   if !dog.empty?
-#     new_dog = dog[0]
-#     dog = Dog.new(id:new_dog[0], name:new_dog[1], breed:new_dog[2])
-#   else
-#     dog = self.create(name: name, breed: breed)
-#   end
-#  dog
-# end
+
 
 
 def self.find_or_create_by(name:, breed:)
@@ -113,7 +97,7 @@ def self.find_or_create_by(name:, breed:)
   else
     dog = self.create(name: name, breed: breed)
   end
-  dog
+ dog
 end
 
 
@@ -132,10 +116,12 @@ def self.find_by_name(name)
   SELECT *
   FROM dogs
   WHERE name = ?
+  LIMIT 1
   SQL
 
-  new_dog = DB[:conn].execute(sql, name ).first
-    Dog.new(id:new_dog[0], name:new_dog[1], breed:new_dog[2])
+  new_dog = DB[:conn].execute(sql, name).map do |row|
+    self.new_from_db(row)
+  end.first
 end
 
 
