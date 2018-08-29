@@ -36,9 +36,17 @@ def self.drop_table
   DB[:conn].execute(sql)
 end
 
+def update
+  sql = <<-SQL
+  UPDATE dogs
+  SET name = ?, breed = ?
+  WHERE id = ?;
+  SQL
 
+  DB[:conn].execute(sql, self.name, self.breed, self.id)
+end
 
-def self.save
+def save
   if self.id
     self.update
   else
@@ -48,18 +56,64 @@ def self.save
     SQL
 
     DB[:conn].execute(sql, self.name, self.breed)
-    @id =DB[:conn].execute("SELECT last_insert_rowid() FROM dogs")[0][0]
+    @id = DB[:conn].execute("SELECT last_insert_rowid() FROM dogs")[0][0]
   end
+  self
 end
 
-def update
+
+def self.create(name:, breed:)
+  new_dog = Dog.new(name: name, breed: breed)
+  new_dog.save
+  new_dog
+end
+
+
+
+
+
+
+
+def self.find_by_id(id)
   sql = <<-SQL
-  UPDATE dogs
-  SET name = ?, breed = ?
+  SELECT *
+  FROM dogs
   WHERE id = ?
   SQL
 
-  DB[:conn].execute(sql, self.name, self.breed, self.id)
+
+  new_dog = DB[:conn].execute(sql, id).first
+  Dog.new(id:new_dog[0], name:new_dog[1], breed:new_dog[2])
+end
+
+#
+# def self.find_or_create_by(name:, breed:)
+#   sql = <<-SQL
+#   SELECT *
+#   FROM dogs
+#   WHERE name = ?, breed = ?
+#   SQL
+#
+#   dog = DB[:conn].execute(sql, name, breed).first
+#   if !dog.empty?
+#     new_dog = dog[0]
+#     dog = Dog.new(id:new_dog[0], name:new_dog[1], breed:new_dog[2])
+#   else
+#     dog = self.create(name: name, breed: breed)
+#   end
+#  dog
+# end
+
+
+def self.find_or_create_by(name:, breed:)
+  dog = DB[:conn].execute("SELECT * FROM dogs WHERE name = ? AND breed = ?", name, breed)
+  if !dog.empty?
+    dog_data = dog[0]
+    dog = Dog.new(id:dog_data[0], name:dog_data[1], breed:dog_data[2])
+  else
+    dog = self.create(name: name, breed: breed)
+  end
+  dog
 end
 
 
@@ -76,18 +130,9 @@ def self.find_by_name(name)
   WHERE name = ?
   SQL
 
-  DB[:conn].execute(sql, name).map do |row|
-    self.new_from_db(row)
-  end
+  new_dog = DB[:conn].execute(sql, name ).first
+    Dog.new(id:new_dog[0], name:new_dog[1], breed:new_dog[2])
 end
-
-
-
-
-
-
-
-
 
 
 
