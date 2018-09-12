@@ -26,15 +26,18 @@ class Dog
   end
 
   def save
-    sql = <<-SQL
-      INSERT INTO dogs (name, breed)
-      VALUES (?, ?)
-    SQL
+    if self.id
+      self.update
+    else
+      sql = <<-SQL
+        INSERT INTO dogs (name, breed)
+        VALUES (?, ?)
+      SQL
 
-    DB[:conn].execute(sql, self.name, self.breed)
-    @id = DB[:conn].execute("SELECT last_insert_rowid() FROM dogs")[0][0]
+      DB[:conn].execute(sql, self.name, self.breed)
+      @id = DB[:conn].execute("SELECT last_insert_rowid() FROM dogs")[0][0]
+    end
 
-    # is this the best way to return the instance?
     self
   end
 
@@ -51,8 +54,8 @@ class Dog
     SQL
 
     DB[:conn].execute(sql, id).map do |row|
-      self.create(name: row[1], breed: row[2])
-    end
+      self.new_from_db(row)
+    end.first
   end
 
   def self.find_or_create_by(name:, breed:)
@@ -64,13 +67,12 @@ class Dog
     else
       dog = self.create(name: name, breed: breed)
     end
+    dog
   end
 
   def self.new_from_db(row)
-    sql = "SELECT * FROM dogs"
-    DB[:conn].execute(sql).map do |row|
-      self.create(name: row[1], breed: row[2])
-    end
+    dog = self.new(id: row[0], name: row[1], breed: row[2])
+    dog
   end
 
   def self.find_by_name(name)
@@ -85,5 +87,9 @@ class Dog
     end.first
   end
 
+  def update
+    sql = "UPDATE dogs SET name = ?, breed = ? WHERE id = ?"
+    DB[:conn].execute(sql, self.name, self.breed, self.id)
+  end
 
 end
