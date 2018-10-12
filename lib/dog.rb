@@ -2,20 +2,19 @@ class Dog
   attr_accessor :name, :breed
   attr_reader :id
 
-  def initialize(id:nil, name:nil, breed:nil)
-    @id = id
-    @name = name
-    @breed = breed
-  end
+    def initialize(id:nil, name:nil, breed:nil)
+      @id = id
+      @name = name
+      @breed = breed
+    end
 
-  def self.create_table
+    def self.create_table
       sql = <<-SQL
             CREATE TABLE IF NOT EXISTS dogs(
               id INTEGER PRIMARY KEY,
               name TEXT,
               breed TEXT)
               SQL
-
       DB[:conn].execute(sql)
     end
 
@@ -25,7 +24,6 @@ class Dog
             SQL
       DB[:conn].execute(sql)
     end
-
 
     def update
       sql = "UPDATE dogs SET name = ?, breed = ? WHERE id = ?"
@@ -53,6 +51,11 @@ class Dog
       doggo
     end
 
+    def self.new_from_db(arr)
+      params = {id: arr[0], name: arr[1], breed: arr[2]}
+      self.new(params)
+    end
+
     def self.find_by_id(id)
       sql = "SELECT * FROM dogs WHERE id = ?"
       result = DB[:conn].execute(sql, id)[0]
@@ -66,17 +69,12 @@ class Dog
     end
 
     def self.find_or_create_by(name:, breed:)
-        pooch = DB[:conn].execute("SELECT * FROM dogs WHERE name = ? AND breed = ?", name, breed)  
+        pooch = DB[:conn].execute("SELECT * FROM dogs WHERE name = ? AND breed = ?", name, breed)
         if !pooch.empty?
           self.new_from_db(pooch[0])
         else
           poodle = self.create(name:name, breed:breed)
         end
-    end
-
-    def self.new_from_db(arr)
-      params = {id: arr[0], name: arr[1], breed: arr[2]}
-      self.new(params)
     end
 
 end
