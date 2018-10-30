@@ -79,6 +79,11 @@ class Dog
     our_dog = @@all.detect {|dog| dog.id == id_name_breed[0] && dog.name == id_name_breed[1] && dog.breed == id_name_breed[2]}
   end
 
-  def update 
+  def update
+    sql = <<-SQL
+      UPDATE dogs SET name = ?, breed = ? WHERE id = ?
+    SQL
+    DB[:conn].execute(sql, self.name, self.breed, self.id)
+  end
 
 end
