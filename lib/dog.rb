@@ -48,31 +48,31 @@ class Dog
     new_dog = Dog.new(name: dog_row[0][1], breed:dog_row[0][2], id: dog_row[0][0])
   end
 
-  # def self.find_or_create_by(attr_hash)
-  #   sql = "SELECT * FROM dogs WHERE id = ?"
-  #   result = DB[:conn].execute(sql, attr_hash[:id])
-  #   binding.pry
-  #   if result == nil
-  #     self.create(attr_hash)
-  #   else
-  #     "fishsticks"
-  #   end
-  #   # if result == nil
-  #   # Dog.new
-  #   # end
-  #
-  # end
+  def self.find_or_create_by(attr_hash)
+    sql = "SELECT * FROM dogs WHERE id = ?"
+    result = DB[:conn].execute(sql, attr_hash[:id])
+    binding.pry
+    if result == nil
+      self.create(attr_hash)
+    else
+      "fishsticks"
+    end
+    # if result == nil
+    # Dog.new
+    # end
+
+  end
 
   def self.find_or_create_by(attr_hash)
-  song = DB[:conn].execute("SELECT * FROM songs WHERE name = ? AND album = ?", name, album)
-  if !song.empty?
-    song_data = song[0]
-    song = Song.new(song_data[0], song_data[1], song_data[2])
-  else
-    song = self.create(name: name, album: album)
+    dog = DB[:conn].execute("SELECT * FROM dogs WHERE name = ? AND album = ?", name, album)
+    if !song.empty?
+      song_data = song[0]
+      song = Song.new(song_data[0], song_data[1], song_data[2])
+    else
+      song = self.create(name: name, album: album)
+    end
+    song
   end
-  song
-end
 
 
 end
