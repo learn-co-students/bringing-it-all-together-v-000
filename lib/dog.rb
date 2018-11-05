@@ -48,31 +48,40 @@ class Dog
     new_dog = Dog.new(name: dog_row[0][1], breed:dog_row[0][2], id: dog_row[0][0])
   end
 
-  def self.find_or_create_by(attr_hash)
-    sql = "SELECT * FROM dogs WHERE id = ?"
-    result = DB[:conn].execute(sql, attr_hash[:id])
-    binding.pry
-    if result == nil
-      self.create(attr_hash)
-    else
-      "fishsticks"
-    end
-    # if result == nil
-    # Dog.new
-    # end
+  # def self.find_or_create_by(attr_hash)
+  #   sql = "SELECT * FROM dogs WHERE id = ?"
+  #   result = DB[:conn].execute(sql, attr_hash[:id])
+  #   binding.pry
+  #   if result == nil
+  #     self.create(attr_hash)
+  #   else
+  #     "fishsticks"
+  #   end
+  #   # if result == nil
+  #   # Dog.new
+  #   # end
+  #
+  # end
 
+  # def self.find_or_create_by(attr_hash)
+  #   # what if theres a dog that doesn't have an id, but does have a name and breed and is already in the database with an id in there
+  #   if DB[:conn].execute("SELECT * FROM dogs WHERE id = ?", attr_hash[:id]).size == 0  # if 0 this indicates the db returned no records, which means we will need to create a dog
+  #     dog = Dog.create(attr_hash)
+  #     dog
+  #   else
+  #     # attr_hash[0] = DB[:conn].execute("SELECT * FROM dogs WHERE name = ? AND breed = ?", attr_hash[:name], attr_hash[:breed])
+  #     # dog = Dog.create(attr_hash)
+  #   end
+  # end
+  # if DB[:conn].execute("SELECT * FROM dogs WHERE id = ?", attr_hash[:id]).size == 0  # if 0 this indicates the db returned no records, which means we will need to create a dog
+# dog = DB[:conn].execute("SELECT * FROM dogs WHERE name = ? AND breed = ?", attr_hash[:name], attr_hash[:breed])
+
+def self.find_or_create_by(attr_hash)
+  # what if theres a dog that doesn't have an id, but does have a name and breed and is already in the database with an id in there
+  dog_row = DB[:conn].execute("SELECT * FROM dogs WHERE name = ? AND breed = ?", attr_hash[:name], attr_hash[:breed])
+  if dog_row[0].size == 0
+    new_dog = Dog.create(attr_hash)
   end
-
-  def self.find_or_create_by(attr_hash)
-    dog = DB[:conn].execute("SELECT * FROM dogs WHERE name = ? AND album = ?", name, album)
-    if !song.empty?
-      song_data = song[0]
-      song = Song.new(song_data[0], song_data[1], song_data[2])
-    else
-      song = self.create(name: name, album: album)
-    end
-    song
-  end
-
+end
 
 end
