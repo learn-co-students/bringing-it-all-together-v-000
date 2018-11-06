@@ -49,20 +49,17 @@ class Dog
   end
 
 
-def self.find_or_create_by(attr_hash)
-  if attr_hash[:id] == nil #ie if theres no id value in the attr_hash
-    # looks for a dog that doesn't have an id in its hash, but does have a name and breed and is already in the database with an id in there
-    dog_row = DB[:conn].execute("SELECT * FROM dogs WHERE name = ? AND breed = ?", attr_hash[:name], attr_hash[:breed]) #check for a breed and name that match and save the returned row
-    if dog_row[0].size == 0
-      # no dogs in here so create a dog from the hash then save it to the db
-      dog = Dog.create(attr_hash)
-    elsif dog_row[0].size > 0 #if its greater than zero then create a dog object
-      dog = Dog.new(name: dog_row[0][1], breed:dog_row[0][2], id: dog_row[0][0])
-      dog.save
+def self.find_or_create_by(name:,breed:)
+  dog_row = DB[:conn].execute("SELECT * FROM dogs WHERE name = ? AND breed = ?", name, breed)
+  if dog_row.size == 0
+    self.create(name: name, breed: breed)
   else
-    self.find_by_id(attr_hash[:id])
-    end
+    self.new(id: dog_row[0][0], name: dog_row[0][1], breed: dog_row[0][2])
   end
+end
+
+def self.new_from_db
+  
 end
 
 end
