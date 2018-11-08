@@ -58,8 +58,18 @@ def self.find_or_create_by(name:,breed:)
   end
 end
 
-def self.new_from_db
-  
+def self.new_from_db(db_row)
+  self.new(name: db_row[1] , breed: db_row[2] , id: db_row[0])
+end
+
+def self.find_by_name(name_from_db)
+  row_from_db = DB[:conn].execute("SELECT * FROM dogs WHERE name = ?", name_from_db)
+  self.new(name: row_from_db[0][1] , breed: row_from_db[0][2] , id: row_from_db[0][0])
+end
+
+def update
+  sql = "UPDATE dogs SET name = ?, breed = ? WHERE id = ?"
+  DB[:conn].execute(sql, self.name, self.breed, self.id)
 end
 
 end
