@@ -22,12 +22,15 @@ class Dog
 
   def self.drop_table
   sql = <<-SQL
-    DROP TABLE dogs
+    DROP TABLE IF EXISTS dogs
   SQL
     DB[:conn].execute(sql)
   end
 
   def save
+    if self.id
+     self.update
+   else
    sql = <<-SQL
    INSERT INTO dogs (name, breed)
    VALUES (?, ?)
@@ -36,22 +39,12 @@ class Dog
     @id = DB[:conn].execute("SELECT last_insert_rowid() FROM dogs")[0][0]
     self
   end
-
-  def self.create(attributes)
-    dog = self.new(attributes)
-    dog.save
-    dog
   end
 
-  def self.find_by_id(number)
-    sql = <<-SQL
-    SELECT *
-    FROM dogs
-    WHERE id = ?
-    SQL
-
-    row = DB[:conn].execute(sql, number)[0]
-    self.new(name:row[1], breed:row[2], id:row[0])
+  def self.create(name:, breed:)
+    dog = self.new(name:name,breed: breed)
+    dog.save
+    dog
   end
 
 
