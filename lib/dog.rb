@@ -6,29 +6,29 @@ class Dog
   end
 
   def self.create_table
-    sql =  <<-SQL 
+    sql =  <<-SQL
       CREATE TABLE IF NOT EXISTS dogs (
-        id INTEGER PRIMARY KEY, 
-        name TEXT, 
+        id INTEGER PRIMARY KEY,
+        name TEXT,
         album TEXT
         )
         SQL
-    DB[:conn].execute(sql) 
+    DB[:conn].execute(sql)
   end
-  
-  def self.drop_table 
-    sql =  <<-SQL 
-      DROP TABLE IF EXISTS dogs 
+
+  def self.drop_table
+    sql =  <<-SQL
+      DROP TABLE IF EXISTS dogs
         SQL
-    DB[:conn].execute(sql) 
+    DB[:conn].execute(sql)
   end
-  
-  def save 
+
+  def save
     if self.id
       self.update
     else
       sql = <<-SQL
-        INSERT INTO dogs (name, breed) 
+        INSERT INTO dogs (name, breed)
         VALUES (?, ?)
       SQL
       DB[:conn].execute(sql, self.name, self.breed)
@@ -36,14 +36,14 @@ class Dog
     end
     self
   end
-  
+
   def self.create(attributes)
     new_dog = self.new(attributes)
     new_dog.save
   end
-  
 
-  def self.find_by_id(id) 
+
+  def self.find_by_id(id)
     sql = <<-SQL
       SELECT *
       FROM dogs
@@ -51,7 +51,10 @@ class Dog
       LIMIT 1
     SQL
     DB[:conn].execute(sql, id).map do |row|
-      self.create(row)
+      self.create({id: row[0],
+        name: row[1],
+        breed: row[2]}
+        )
     end.first
     end
 
