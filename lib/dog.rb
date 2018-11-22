@@ -1,8 +1,8 @@
+require_relative "../config/environment.rb"
+
 class Dog
   attr_accessor :name, :breed
   attr_reader :id
-  
-  DB = {:conn => SQLite3::Database.new("db/dogs.db")}
   
   def initialize(id: nil, name:, breed:)
     local_variables.each do |k|
