@@ -1,4 +1,5 @@
-require_relative '../config/environment'
+require_relative '../config/environment.rb'
+
 DB[:conn] = SQLite3::Database.new ":memory:"
 
 RSpec.configure do |config|
