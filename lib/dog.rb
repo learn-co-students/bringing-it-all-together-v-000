@@ -39,6 +39,10 @@ class Dog
     dog
   end
   
+  def self.find_or_create_by(name: 'Dog1')
+    
+  end
+  
   
   def self.find_by_id(id)
     sql = "SELECT * FROM dogs WHERE id = ?"
