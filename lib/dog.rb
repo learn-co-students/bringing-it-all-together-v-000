@@ -50,9 +50,9 @@ class Dog
         dog
       end
 
-
+#binding.pry
       def self.find_by_id(id)
-        #sql <<-SQL
+        sql = <<-SQL
         SELECT *
         FROM dogs
         WHERE id = ?
@@ -60,11 +60,13 @@ class Dog
         SQL
 
         DB[:conn].execute(sql, id).map do |row|
+
            self.new_from_db(row)
               end
+
       end
 
-      #  binding.pry
+
 
       #
       # def find_or_create
