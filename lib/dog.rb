@@ -63,10 +63,7 @@ class Dog
         SQL
         a = DB[:conn].execute(sql, @name, @breed, @id, )
     end
-    # creates an instance of a dog if it does not already exist (FAILED - 1)
-    # does not create a new instance if a matching dog exists (FAILED - 2)
-    # when two dogs have the same name and different breed, it returns the correct dog (FAILED - 3)
-    # when creating a new dog with the same name as persisted dogs, it returns the correct dog (FAILED - 4)
+    
     def self.find_or_create_by(name:, breed:)
         dogs = DB[:conn].execute("SELECT * FROM dogs WHERE name = ? AND breed = ?", name, breed)
         if !dogs.empty?
