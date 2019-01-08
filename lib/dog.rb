@@ -28,14 +28,6 @@ class Dog
     self.new(id: row[0], name: row[1], breed: row[2])
   end
   
-  def self.find_by_name(name)
-    sql = "SELECT * FROM dogs WHERE name = ? LIMIT 1" 
-      
-      DB[:conn].execute(sql, name).map do |row|
-        self.new_from_db(row)
-      end.first 
-  end
-  
   def save
     
     DB[:conn].execute("INSERT INTO dogs VALUES (?, ?)", @name, @breed)
@@ -52,6 +44,14 @@ class Dog
 
     #   expect(DB[:conn].execute("SELECT * FROM dogs WHERE id = 1")).to eq([[1, "Teddy", "cockapoo"]])
     #   expect(dog.id).to eq(1)
+  end
+  
+  def self.find_by_name(name)
+    sql = "SELECT * FROM dogs WHERE name = ? LIMIT 1" 
+      
+      DB[:conn].execute(sql, name).map do |row|
+        self.new_from_db(row)
+      end.first 
   end
   
   def update
