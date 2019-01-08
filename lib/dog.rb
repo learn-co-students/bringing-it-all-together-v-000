@@ -1,3 +1,5 @@
+require 'pry'
+
 class Dog
   
   attr_accessor :name, :breed, :id
@@ -31,7 +33,9 @@ class Dog
   end
   
   def self.find_by_name(name)
-    DB[:conn].execute("SELECT * FROM dogs WHERE name = ?", name)
+    row = DB[:conn].execute("SELECT * FROM dogs WHERE name = ?", name)
+    # binding.pry
+    self.new_from_db(row)
   end
   
   
