@@ -29,23 +29,19 @@ class Dog
   end
   
   def save
-    
-    DB[:conn].execute("INSERT INTO dogs VALUES (?, ?)", @name, @breed)
-    
-    # describe "#save" do
-    # it 'returns an instance of the dog class' do
-    #   dog = teddy.save
-
-    #   expect(dog).to be_instance_of(Dog)
-    # end
-
-    # it 'saves an instance of the dog class to the database and then sets the given dogs `id` attribute' do
-    #   dog = teddy.save
-
-    #   expect(DB[:conn].execute("SELECT * FROM dogs WHERE id = 1")).to eq([[1, "Teddy", "cockapoo"]])
-    #   expect(dog.id).to eq(1)
+    sql = <<-SQL
+      INSERT INTO dogs (name, breed) VALUES (?, ?)
+    SQL
+    DB[:conn].execute(sql, @name, @breed)
+    @id = DB[:conn].last_insert_row_id
+    self
   end
-  
+
+  def self.create(attr_hash)
+    dog = Dog.new(name: attr_hash[:name], breed: attr_hash[:breed]).save
+    dog
+  end
+
   def self.find_by_name(name)
     sql = "SELECT * FROM dogs WHERE name = ? LIMIT 1" 
       
