@@ -50,10 +50,10 @@ class Dog
   def self.find_or_create_by(hash)
     sql = "SELECT * FROM dogs WHERE name = ? AND breed = ?"
     row = DB[:conn].execute(sql, hash[:name], hash[:breed])[0]
-    if !row.empty?
+    if row != nil
       self.new(name: row[1], breed: row[2], id: row[0])
     else
-      self.save
+      self.create(name: @name, breed: @breed)
     end
   end
 
