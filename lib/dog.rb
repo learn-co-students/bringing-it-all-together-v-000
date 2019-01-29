@@ -49,13 +49,15 @@ class Dog
       SELECT * FROM dogs
       WHERE id = ?
     SQL
-  
+    #binding.pry
     result = DB[:conn].execute(sql, id)[0]
+    Dog.new(name: result[1], breed: result[2], id: result[0])
   end
   
-  # def self.create(hash)
-  #   binding.pry
-  # end
+  def self.create(hash)
+    dog = Dog.new(hash)
+    dog.save
+  end
   
   def update
     sql = <<-SQL
@@ -77,6 +79,12 @@ class Dog
       @id = DB[:conn].execute("SELECT last_insert_rowid() FROM dogs")[0][0]
     end
     self
+  end
+  
+  def self.find_or_create_by(name:, breed:)
+    binding.pry
+    dog = DB[:conn].execute("SELECT * FROM dogs WHERE name = ? AND breed = ?", name, breed)
+    if !d
   end
   
   
