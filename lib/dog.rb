@@ -75,17 +75,21 @@ class Dog
         VALUES (?, ?)
       SQL
       DB[:conn].execute(sql, self.name, self.breed)
-    #binding.pry
       @id = DB[:conn].execute("SELECT last_insert_rowid() FROM dogs")[0][0]
     end
     self
   end
   
   def self.find_or_create_by(name:, breed:)
-    binding.pry
     dog = DB[:conn].execute("SELECT * FROM dogs WHERE name = ? AND breed = ?", name, breed)
-    if !d
+    if !dog.empty?
+      dog_data = dog[0]
+      dog = self.find_by_name(dog_data[1])
+    else
+      dog = self.create(name: name, breed: breed)
+    end
+    dog
   end
   
-  
+
 end
