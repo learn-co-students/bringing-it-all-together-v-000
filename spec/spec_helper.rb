@@ -5,6 +5,9 @@ RSpec.configure do |config|
   # Use color not only in STDOUT but also in pagers and files
   config.tty = true
 
+  # Use the specified formatter
+  config.formatter = :progress # :progress, :html, :textmate
+
   #you can do global before/after here like this:
   config.before(:each) do
     if Dog.respond_to?(:create_table)
