@@ -48,4 +48,12 @@ class Dog
     self.new(id: row[0], name: row[1], breed: row[2])
   end
   
+  def self.find_or_create_by(attributes)
+    if attributes[:id]
+      self.find_by_id(attributes[:id])
+    else
+      self.create(attributes)
+    end
+  end
+  
 end
