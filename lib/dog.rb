@@ -22,4 +22,21 @@ class Dog
     DB[:conn].execute("DROP TABLE IF EXISTS dogs;")
   end
   
+  #def self.new_from_db
+  #  sql = <<-SQL
+  #    SELECT *
+  #    FROM dogs
+  #  SQL
+  #end
+  
+  def save
+    sql = <<-SQL
+      INSERT INTO dogs (name, breed) 
+      VALUES (?, ?);
+    SQL
+    DB[:conn].execute(sql, self.name, self.breed)
+    self.id = DB[:conn].execute("SELECT last_insert_rowid() from DOGS;")[0][0]
+    self
+  end
+  
 end
