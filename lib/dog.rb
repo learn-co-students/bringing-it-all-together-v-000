@@ -1,3 +1,4 @@
+require 'pry'
 class Dog
   attr_accessor :name, :breed, :id
   
@@ -22,13 +23,6 @@ class Dog
     DB[:conn].execute("DROP TABLE IF EXISTS dogs;")
   end
   
-  #def self.new_from_db
-  #  sql = <<-SQL
-  #    SELECT *
-  #    FROM dogs
-  #  SQL
-  #end
-  
   def save
     sql = <<-SQL
       INSERT INTO dogs (name, breed) 
@@ -37,6 +31,21 @@ class Dog
     DB[:conn].execute(sql, self.name, self.breed)
     self.id = DB[:conn].execute("SELECT last_insert_rowid() from DOGS;")[0][0]
     self
+  end
+  
+  def self.create(attributes)
+    dog = self.new(name: attributes[:name], breed: attributes[:breed])
+    dog.save
+  end
+  
+  def self.find_by_id(id)
+    sql = <<-SQL
+      SELECT *
+      FROM dogs
+      WHERE id = ?;
+    SQL
+    row = DB[:conn].execute(sql, id)[0]
+    self.new(id: row[0], name: row[1], breed: row[2])
   end
   
 end
