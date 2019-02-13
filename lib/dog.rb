@@ -31,6 +31,7 @@ class Dog
    DB[:conn].execute(sql, self.name, self.breed)
    @id = DB[:conn].execute("SELECT last_insert_rowid() FROM dogs")[0][0]
   end
+  self
  end
 
  def update
@@ -38,11 +39,11 @@ class Dog
   DB[:conn].execute(sql, self.name, self.breed, self.id)
  end
 
- def self.create(name, breed)
- new_dog = Dog.new(name, breed)
- new_dog.save
- new_dog
-end
+ def self.create(name:, breed:)
+   new_dog = Dog.new(name: name, breed: breed)
+   new_dog.save
+   new_dog
+ end
 
 def self.new_from_db(row)
   new_dog = Dog.new(row[0], row[1], row[2])
@@ -59,7 +60,6 @@ def self.find_by_name(name)
    WHERE name = ?
    LIMIT 1
    SQL
-
     DB[:conn].execute(sql, name).map do |row|
       self.new_from_db(row)
     end.first
