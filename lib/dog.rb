@@ -78,4 +78,12 @@ def self.find_by_name(name)
     end.first
  end
 
+ def self.find_or_create_by(row)
+    if self.find_by_id(id) == self.id
+      self
+    else
+      self.new_from_db(row)
+    end
+ end
+
 end
