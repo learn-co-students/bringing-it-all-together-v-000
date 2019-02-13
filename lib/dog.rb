@@ -35,7 +35,7 @@ class Dog
  end
 
  def update
-  sql = "UPDATE dogs SET name = ?, grade = ? WHERE id = ?"
+  sql = "UPDATE dogs SET name = ?, breed = ? WHERE id = ?"
   DB[:conn].execute(sql, self.name, self.breed, self.id)
  end
 
@@ -46,12 +46,25 @@ class Dog
  end
 
 def self.new_from_db(row)
-  new_dog = Dog.new(row[0], row[1], row[2])
-  new_dog.id = row[0]
-  new_dog.name = row[1]
-  new_dog.grade = row[2]
+  id = row[0]
+  name = row[1]
+  breed = row[2]
+  new_dog = Dog.new(id: id, name: name, breed: breed)
   new_dog
 end
+
+def self.find_by_id(id)
+  sql = <<-SQL
+   SELECT *
+   FROM dogs
+   WHERE id = ?
+   LIMIT 1
+   SQL
+    DB[:conn].execute(sql, id).map do |row|
+      self.new_from_db(row)
+  end.first
+
+ end
 
 def self.find_by_name(name)
   sql = <<-SQL
@@ -64,4 +77,5 @@ def self.find_by_name(name)
       self.new_from_db(row)
     end.first
  end
+
 end
