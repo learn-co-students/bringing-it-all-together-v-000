@@ -60,6 +60,8 @@ def self.new_from_db(new_dogs)
  self.new(id: id, name: name, breed: breed)
  end
 
-  
+def self.find_or_create_by
+end 
+
 
 end
