@@ -6,6 +6,7 @@ class Dog
   def initialize(name:, breed:, id: nil)
     @name = name
     @breed = breed
+    @id = id
   end
 
   def self.create_table
@@ -41,6 +42,20 @@ class Dog
       @id = DB[:conn].execute("SELECT last_insert_rowid() FROM dogs")[0][0]
     end
     self
+  end
+
+  def self.create(dog_hash)
+    dog = self.new(dog_hash)
+    dog.save
+    dog
+  end
+
+  def self.find_by_id(id)
+    sql = "SELECT * FROM dogs WHERE id = ? LIMIT 1"
+
+    result = DB[:conn].execute(sql, id)[0]
+    dog = self.new(id: result[0], name: result[1], breed: result[2])
+    dog
   end
 
 end
