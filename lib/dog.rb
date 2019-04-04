@@ -63,13 +63,19 @@ class Dog
     if !dog.empty?
       dog_data = dog[0]
       dog = self.new(id: dog_data[0], name: dog_data[1], breed: dog_data[2])
-    elsif dog.include?(name)
-      dog_data = dog[0]
-      dog = self.new(id: dog_data[0], name: dog_data[1], breed: dog_data[2])
     else
       dog = self.create(name: name, breed: breed)
     end
     dog
+  end
+
+  def self.new_from_db(row)
+    dog = self.new(id: row[0], name: row[1], breed: row[2])
+  end
+
+  def self.find_by_name(name)
+    dog_info = DB[:conn].execute("SELECT * FROM dogs WHERE name = ?", name)[0]
+    dog = self.new(id: dog_info[0], name: dog_info[1], breed: dog_info[2])
   end
 
 end
