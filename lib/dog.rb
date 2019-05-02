@@ -26,16 +26,14 @@ class Dog
     if self.id
       self.update
     else
-      sql = "INSERT INTO dogs (name, breed) VALUES (?,?)"
-      DB[:conn].execute(sql, name, breed)
+      DB[:conn].execute("INSERT INTO dogs (name, breed) VALUES (?,?)", name, breed)
       @id = DB[:conn].execute("SELECT last_insert_rowid() FROM dogs")[0][0]
     end
     self
   end
 
   def update
-    sql = "UPDATE dogs SET name = ?, breed = ? WHERE id = ?"
-    DB[:conn].execute(sql, self.name, self.breed, self.id)
+    DB[:conn].execute("UPDATE dogs SET name = ?, breed = ? WHERE id = ?", self.name, self.breed, self.id)
   end
 
   def self.new_from_db(row)
@@ -66,7 +64,4 @@ class Dog
     row = DB[:conn].execute(sql, name).flatten
     self.new_from_db(row)
   end
-
-
-
 end
