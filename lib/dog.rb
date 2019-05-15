@@ -33,5 +33,31 @@ class Dog
     self.new(id: id, name: name, breed: breed)
   end
 
+  def save
+    if self.id
+      self.update
+    else
+    sql = <<-SQL
+      INSERT INTO dogs (name, breed) VALUES (?,?)
+      SQL
+      DB[:conn].execute(sql, self.name, self.breed)
+      @id = DB[:conn].execute("SELECT last_insert_rowid() FROM dogs")[0][0]
+    end
+  end
+
+  def update
+    sql = "UPDATE dogs SET name = ?, breed = ? WHERE id = ?"
+    DB[:conn].execute(sql, self.name, self.breed, self.id)
+  end
+
+  def self.find_by_id(id)
+    sql = <<-SQL
+      SELECT * FROM dogs WHERE id = ?
+      LIMIT 1
+      SQL
+    DB[:conn].execute(sql, id).map do |row|
+      self.new_from_db(row)
+    end.first
+  end
 
 end
