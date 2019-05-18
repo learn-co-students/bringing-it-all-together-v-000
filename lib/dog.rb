@@ -55,16 +55,6 @@ class Dog
     dog
   end
 
-  # def self.find_or_create_by(name:, breed:)
-  #   dog = DB[:conn].execute("SELECT * FROM dogs WHERE name = ? AND breed = ?", name, breed).flatten
-  #   if dog.empty?
-  #     dog = self.create({name: dog[1], breed: dog[2]})
-  #   else
-  #     dog = self.new({id: dog[0], name: dog[1], breed: dog[2]})
-  #   end
-  #   dog
-  # end
-
   def self.new_from_db(row)
     Dog.new({id: row[0], name: row[1], breed: row[2]})
   end
