@@ -94,7 +94,7 @@ describe "Dog" do
   describe '.find_or_create_by' do
     it 'creates an instance of a dog if it does not already exist' do
       dog1 = Dog.create(name: 'teddy', breed: 'cockapoo')
-      dog2 = Dog.find_or_create_by(name: 'teddy', breed: 'cockapoo')
+      dog2 = Dog.find_or_create_by({name: 'teddy', breed: 'cockapoo'})
 
       expect(dog1.id).to eq(dog2.id)
     end
@@ -147,7 +147,6 @@ describe "Dog" do
       teddy_jr = Dog.find_by_name("Teddy Jr.")
       expect(teddy_jr.id).to eq(teddy.id)
     end
-
   end
 
 end
