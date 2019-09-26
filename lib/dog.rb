@@ -32,7 +32,7 @@ class Dog
       VALUES (?, ?)
     SQL
     DB[:conn].execute(sql, self.name, self.breed)
-    @ID = DB[:conn].execute("SELECT last_insert_rowid() FROM dogs")[0][0]
+    @id = DB[:conn].execute("SELECT last_insert_rowid() FROM dogs")[0][0]
     return self
   end
 
@@ -60,8 +60,20 @@ class Dog
     end.first
   end
 
-  def self.find_or_create_by
-
+  def self.find_or_create_by(name:, breed:)
+    # find_by name/breed
+    sql = <<-SQL
+    SELECT * FROM dogs WHERE name = ? AND breed =? LIMIT 1
+    SQL
+    dog = DB[:conn].execute(sql,name,breed).map do |row|
+      self.new_from_db(row)
+      end.first
+      # binding.pry
+    if dog != nil
+      dog
+    else
+      self.create(name: name, breed: breed)
+    end
   end
 
   def self.find_by_name(name)
@@ -72,12 +84,12 @@ class Dog
       self.new_from_db(row)
     end.first
   end
-  #
-  # def update
-  #   sql = <<-SQL
-  #   UPDATE dogs SET name = ?, breed = ?, id = ?
-  #   SQL
-  #   DB[:conn].execute(sql, self.name, self.breed, self.id)
-  # end
+  
+  def update
+    sql = <<-SQL
+    UPDATE dogs SET name = ?, breed = ?, id = ?
+    SQL
+    DB[:conn].execute(sql, self.name, self.breed, self.id)
+  end
 
 end
