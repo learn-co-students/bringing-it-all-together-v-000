@@ -25,10 +25,22 @@ class Dog
     DB[:conn].execute(sql)
   end
   
-  def save 
-    def self.save(name:, type:, db:)
-    db.execute( "INSERT INTO pokemon (name, type) VALUES (?, ?)", [name, type])
-    @id = DB[:conn].execute("SELECT last_insert_rowid() FROM pokemon")[0][0]
+  def save()
+    if self.id
+      self.update
+    else
+      sql = <<-SQL
+      INSERT INTO dogs (name, breed)
+      VALUES (?, ?)
+      SQL
+      DB[:conn].execute(sql, self.name, self.grade)
+      @id = DB[:conn].execute("SELECT last_insert_rowid() FROM dog")[0][0]
+      DB[:conn].execute("SELECT * FROM dogs ORDER by id DESC LIMIT 1)
+  end
+end
+    #def self.save(name:, type:, db:)
+    #db.execute( "INSERT INTO pokemon (name, type) VALUES (?, ?)", [name, type])
+    #@id = DB[:conn].execute("SELECT last_insert_rowid() FROM pokemon")[0][0]
   end
   
 
