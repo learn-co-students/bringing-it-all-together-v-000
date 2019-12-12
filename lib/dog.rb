@@ -3,7 +3,7 @@ class Dog
   attr_accessor :id, :name, :breed
   
  def initialize(id: nil, name: , breed: )
-    @id = id 
+    @id = id
     @name = name
     @breed = breed
   end
@@ -33,8 +33,25 @@ class Dog
       INSERT INTO dogs (name, breed)
       VALUES (?, ?)
       SQL
-      DB[:conn].execute(sql, self.name, self.grade)
-      @id = DB[:conn].execute("SELECT last_insert_rowid() FROM dog")[0][0]
-      DB[:conn].execute("SELECT * FROM dogs ORDER by id DESC LIMIT 1)
+      DB[:conn].execute(sql, self.name, self.breed)
+      @id = DB[:conn].execute("SELECT last_insert_rowid() FROM dogs")[0][0]
+      self
+      #DB[:conn].execute("SELECT * FROM dogs ORDER by id DESC LIMIT 1")
+    end
   end
+  
+  def self.create(name:, breed:)
+  end
+
+  def update
+    sql = "UPDATE dogs SET name = ?, breed = ? WHERE id = ?"
+    DB[:conn].execute(sql, self.name, self.breed, self.id)
+  end
+    
+  def self.create(name: , breed: )
+    dog = self.new(name: name, breed: breed)
+    dog.save
+    dog
+  end
+  
 end
