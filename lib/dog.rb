@@ -30,7 +30,7 @@ class Dog
        INSERT INTO dogs (name, breed) VALUES (?,?)
        SQL
        DB[:conn].execute(sql, self.name, self.breed)
-       @id = DB[:conn].execute("SELECT last_insert_rowid() FROM dogs")[0][0]
+       @id = DB[:conn].execute("SELECT last_insert_rowid() FROM dogs").first.first
      end
      self
    end
@@ -50,14 +50,18 @@ class Dog
      sql = <<-SQL
      SELECT * FROM dogs WHERE name = ?
      SQL
-     DB[:conn].execute(sql, name).map {|row| self.new_from_db(row)}.first
+     #DB[:conn].execute(sql, name).map {|row| self.new_from_db(row)}.first
+     row = DB[:conn].execute(sql, name).first
+     self.new_from_db(row)
    end
 
    def self.find_by_id(id)
      sql = <<-SQL
      SELECT * FROM dogs WHERE id = ?
      SQL
-     DB[:conn].execute( sql, id).map {|row| self.new_from_db(row)}.first
+     #DB[:conn].execute( sql, id).map {|row| self.new_from_db(row)}.first
+     row = DB[:conn].execute( sql, id).first
+     self.new_from_db(row)
    end
 
    def self.create (name:, breed:)
@@ -72,7 +76,7 @@ class Dog
      SQL
      dog_data = DB[:conn].execute(sql, name, breed)
      if !dog_data.empty?
-       dog_row = dog_data[0]
+       dog_row = dog_data.first
        dog = self.new({id: dog_row[0], name: dog_row[1], breed: dog_row[2]})
      else
        dog = self.create(name:name, breed:breed)
