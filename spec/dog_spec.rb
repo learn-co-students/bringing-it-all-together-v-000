@@ -3,7 +3,7 @@ require 'pry'
 
 describe "Dog" do
 
-  let(:teddy) {Dog.new(name: "Teddy", breed: "cockapoo")}
+  let(:teddy) {Dog.new("Teddy", "cockapoo")}
 
   before(:each) do
     DB[:conn].execute("DROP TABLE IF EXISTS dogs")
@@ -19,7 +19,7 @@ describe "Dog" do
 
   describe "attributes" do
     it 'has a name and a breed' do
-      dog = Dog.new(name: "Fido", breed: "lab")
+      dog = Dog.new("Fido", "lab")
       expect(dog.name).to eq("Fido")
       expect(dog.breed).to eq("lab")
     end
