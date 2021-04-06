@@ -43,11 +43,17 @@ class Dog
     self
   end
 
-  def self.create(name:, breed:)
-    dog = self.new(name:, breed:)
+  def self.create(attributes)
+    name = attributes[:name]
+    breed = attributes[:breed]
+    dog = self.new(name: name, breed: breed)
     dog.save
     dog
+    # binding.pry
   end
+  
+#   
+
 
 #   def update
 #     sql = <<-SQL
