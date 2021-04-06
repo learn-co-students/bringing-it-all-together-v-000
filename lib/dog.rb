@@ -49,11 +49,11 @@ class Dog
     dog = self.new(name: name, breed: breed)
     dog.save
     dog
-    # binding.pry
   end
+   
+  def self.new_from_db
   
-#   
-
+  end
 
 #   def update
 #     sql = <<-SQL
